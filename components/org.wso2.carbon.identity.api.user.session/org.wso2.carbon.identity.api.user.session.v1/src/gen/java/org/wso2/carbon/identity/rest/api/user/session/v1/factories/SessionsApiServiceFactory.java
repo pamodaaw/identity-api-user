@@ -17,7 +17,7 @@
 package org.wso2.carbon.identity.rest.api.user.session.v1.factories;
 
 import org.wso2.carbon.identity.rest.api.user.session.v1.SessionsApiService;
-import org.wso2.carbon.identity.rest.api.user.session.v1.impl.SessionsApiServiceImpl;
+import org.wso2.carbon.identity.rest.api.user.impl.SessionsApiServiceImpl;
 
 public class SessionsApiServiceFactory {
 
