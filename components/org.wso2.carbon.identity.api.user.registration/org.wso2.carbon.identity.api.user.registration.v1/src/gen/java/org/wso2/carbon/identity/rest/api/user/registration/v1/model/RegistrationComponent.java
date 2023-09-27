@@ -24,6 +24,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Message;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Param;
 import javax.validation.constraints.*;
 
@@ -42,6 +43,8 @@ public class RegistrationComponent  {
     private String id;
     private String type;
     private List<Param> requiredParams = null;
+
+    private List<Message> messages = null;
 
 
     /**
@@ -127,6 +130,32 @@ public class RegistrationComponent  {
         return this;
     }
 
+        /**
+    **/
+    public RegistrationComponent messages(List<Message> messages) {
+
+        this.messages = messages;
+        return this;
+    }
+    
+    @ApiModelProperty(value = "")
+    @JsonProperty("messages")
+    @Valid
+    public List<Message> getMessages() {
+        return messages;
+    }
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public RegistrationComponent addMessagesItem(Message messagesItem) {
+        if (this.messages == null) {
+            this.messages = new ArrayList<>();
+        }
+        this.messages.add(messagesItem);
+        return this;
+    }
+
     
 
     @Override
@@ -142,12 +171,13 @@ public class RegistrationComponent  {
         return Objects.equals(this.name, registrationComponent.name) &&
             Objects.equals(this.id, registrationComponent.id) &&
             Objects.equals(this.type, registrationComponent.type) &&
-            Objects.equals(this.requiredParams, registrationComponent.requiredParams);
+            Objects.equals(this.requiredParams, registrationComponent.requiredParams) &&
+            Objects.equals(this.messages, registrationComponent.messages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, id, type, requiredParams);
+        return Objects.hash(name, id, type, requiredParams, messages);
     }
 
     @Override
@@ -160,6 +190,7 @@ public class RegistrationComponent  {
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    type: ").append(toIndentedString(type)).append("\n");
         sb.append("    requiredParams: ").append(toIndentedString(requiredParams)).append("\n");
+        sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
         sb.append("}");
         return sb.toString();
     }

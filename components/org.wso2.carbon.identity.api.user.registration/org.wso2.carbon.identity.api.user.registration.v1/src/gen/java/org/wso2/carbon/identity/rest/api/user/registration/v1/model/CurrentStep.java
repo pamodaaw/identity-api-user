@@ -24,7 +24,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Message;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegistrationComponent;
 import javax.validation.constraints.*;
 
@@ -75,8 +74,6 @@ public enum StepTypeEnum {
     private StepTypeEnum stepType;
     private List<RegistrationComponent> registrationComponents = null;
 
-    private List<Message> messages = null;
-
 
     /**
     * The type of the current step in the registration flow. - MULTI_OPTIONS_PROMPT - The current step is for the selection of the registration option. - REGISTRATION_USER_PROMPT - The current step is for obtaining information from the user to proceed the registration 
@@ -123,32 +120,6 @@ public enum StepTypeEnum {
         return this;
     }
 
-        /**
-    **/
-    public CurrentStep messages(List<Message> messages) {
-
-        this.messages = messages;
-        return this;
-    }
-    
-    @ApiModelProperty(value = "")
-    @JsonProperty("messages")
-    @Valid
-    public List<Message> getMessages() {
-        return messages;
-    }
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
-    }
-
-    public CurrentStep addMessagesItem(Message messagesItem) {
-        if (this.messages == null) {
-            this.messages = new ArrayList<>();
-        }
-        this.messages.add(messagesItem);
-        return this;
-    }
-
     
 
     @Override
@@ -162,13 +133,12 @@ public enum StepTypeEnum {
         }
         CurrentStep currentStep = (CurrentStep) o;
         return Objects.equals(this.stepType, currentStep.stepType) &&
-            Objects.equals(this.registrationComponents, currentStep.registrationComponents) &&
-            Objects.equals(this.messages, currentStep.messages);
+            Objects.equals(this.registrationComponents, currentStep.registrationComponents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepType, registrationComponents, messages);
+        return Objects.hash(stepType, registrationComponents);
     }
 
     @Override
@@ -179,7 +149,6 @@ public enum StepTypeEnum {
         
         sb.append("    stepType: ").append(toIndentedString(stepType)).append("\n");
         sb.append("    registrationComponents: ").append(toIndentedString(registrationComponents)).append("\n");
-        sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
         sb.append("}");
         return sb.toString();
     }

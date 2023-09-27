@@ -22,6 +22,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InputObject;
 import javax.validation.constraints.*;
 
 /**
@@ -104,7 +107,8 @@ public enum InputTypeEnum {
 }
 
     private InputTypeEnum inputType;
-    private Object input;
+    private List<InputObject> input = new ArrayList<>();
+
 
     /**
     * Indicates the type of the current step in the flow.
@@ -170,27 +174,31 @@ public enum InputTypeEnum {
     }
 
     /**
-    * The data entered by the user as required by the registration flow.
     **/
-    public SubmitRegRequest input(Object input) {
+    public SubmitRegRequest input(List<InputObject> input) {
 
         this.input = input;
         return this;
     }
     
-    @ApiModelProperty(example = "{\"username\":\"johnd\",\"firstName\":\"John\",\"lastName\":\"Doe\"}", required = true, value = "The data entered by the user as required by the registration flow.")
+    @ApiModelProperty(required = true, value = "")
     @JsonProperty("input")
     @Valid
     @NotNull(message = "Property input cannot be null.")
 
-    public Object getInput() {
+    public List<InputObject> getInput() {
         return input;
     }
-    public void setInput(Object input) {
+    public void setInput(List<InputObject> input) {
         this.input = input;
     }
 
+    public SubmitRegRequest addInputItem(InputObject inputItem) {
+        this.input.add(inputItem);
+        return this;
+    }
 
+    
 
     @Override
     public boolean equals(java.lang.Object o) {

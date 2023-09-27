@@ -18,9 +18,39 @@
 
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core;
 
+import org.wso2.carbon.identity.api.user.registration.common.UserRegistrationServiceHolder;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function.RegistrationResponseToExternalRef;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function.SubmitRequestToInternalRef;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InitRegRequest;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegPromptResponse;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
+import org.wso2.carbon.identity.user.registration.UserRegistrationFlowService;
+import org.wso2.carbon.identity.user.registration.exception.RegistrationFrameworkException;
+import org.wso2.carbon.identity.user.registration.model.RegistrationRequest;
+import org.wso2.carbon.identity.user.registration.model.response.RegistrationResponse;
+import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
+
 /**
  * Implementation of the Rest APIs for user self registration.
  */
 public class UserRegistrationService {
 
+    public RegPromptResponse initiateUserRegistration(InitRegRequest initRegRequest)
+            throws RegistrationFrameworkException {
+
+        UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
+        RegistrationResponse response = service.initiateUserRegistration(initRegRequest.getApplicationId(),
+                RegistrationFlowConstants.SupportedProtocol.API_BASED);
+        return new RegistrationResponseToExternalRef().apply(response);
+
+    }
+
+    public RegPromptResponse handleIntermediateRequests(SubmitRegRequest submitRegRequest)
+            throws RegistrationFrameworkException {
+
+        UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
+        RegistrationRequest request = new SubmitRequestToInternalRef().apply(submitRegRequest);
+        RegistrationResponse response = service.processIntermediateUserRegistration(request);
+        return new RegistrationResponseToExternalRef().apply(response);
+    }
 }
