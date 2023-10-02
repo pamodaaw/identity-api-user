@@ -24,39 +24,58 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Message;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Param;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RequestedParamInfo;
 import javax.validation.constraints.*;
 
 /**
- * Some description
+ * The details of an executor which perform a specific task of the registration flow.
  **/
 
 import io.swagger.annotations.*;
 import java.util.Objects;
 import javax.validation.Valid;
 import javax.xml.bind.annotation.*;
-@ApiModel(description = "Some description")
-public class RegistrationComponent  {
+@ApiModel(description = "The details of an executor which perform a specific task of the registration flow.")
+public class RegStepExecutor  {
   
+    private String givenName;
     private String name;
     private String id;
-    private String type;
-    private List<Param> requiredParams = null;
+    private List<RequestedParamInfo> requestedParameters = null;
 
-    private List<Message> messages = null;
+    private List<MessageInfo> messages = null;
 
 
     /**
-    * The name given to the registration component.
+    * The unique name given to the instance of the registration component.
     **/
-    public RegistrationComponent name(String name) {
+    public RegStepExecutor givenName(String givenName) {
+
+        this.givenName = givenName;
+        return this;
+    }
+    
+    @ApiModelProperty(example = "Basic Attribute Collector", value = "The unique name given to the instance of the registration component.")
+    @JsonProperty("givenName")
+    @Valid
+    public String getGivenName() {
+        return givenName;
+    }
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+    /**
+    * The name of the registration component.
+    **/
+    public RegStepExecutor name(String name) {
 
         this.name = name;
         return this;
     }
     
-    @ApiModelProperty(example = "Basic Attribute Collector", value = "The name given to the registration component.")
+    @ApiModelProperty(example = "Basic Attribute Collector", value = "The name of the registration component.")
     @JsonProperty("name")
     @Valid
     public String getName() {
@@ -69,7 +88,7 @@ public class RegistrationComponent  {
     /**
     * The unique identifier of the registration component.
     **/
-    public RegistrationComponent id(String id) {
+    public RegStepExecutor id(String id) {
 
         this.id = id;
         return this;
@@ -86,53 +105,34 @@ public class RegistrationComponent  {
     }
 
     /**
-    * The type of the registration component.
     **/
-    public RegistrationComponent type(String type) {
+    public RegStepExecutor requestedParameters(List<RequestedParamInfo> requestedParameters) {
 
-        this.type = type;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "Attribute Collection", value = "The type of the registration component.")
-    @JsonProperty("type")
-    @Valid
-    public String getType() {
-        return type;
-    }
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-    **/
-    public RegistrationComponent requiredParams(List<Param> requiredParams) {
-
-        this.requiredParams = requiredParams;
+        this.requestedParameters = requestedParameters;
         return this;
     }
     
     @ApiModelProperty(value = "")
-    @JsonProperty("requiredParams")
+    @JsonProperty("requestedParameters")
     @Valid
-    public List<Param> getRequiredParams() {
-        return requiredParams;
+    public List<RequestedParamInfo> getRequestedParameters() {
+        return requestedParameters;
     }
-    public void setRequiredParams(List<Param> requiredParams) {
-        this.requiredParams = requiredParams;
+    public void setRequestedParameters(List<RequestedParamInfo> requestedParameters) {
+        this.requestedParameters = requestedParameters;
     }
 
-    public RegistrationComponent addRequiredParamsItem(Param requiredParamsItem) {
-        if (this.requiredParams == null) {
-            this.requiredParams = new ArrayList<>();
+    public RegStepExecutor addRequestedParametersItem(RequestedParamInfo requestedParametersItem) {
+        if (this.requestedParameters == null) {
+            this.requestedParameters = new ArrayList<>();
         }
-        this.requiredParams.add(requiredParamsItem);
+        this.requestedParameters.add(requestedParametersItem);
         return this;
     }
 
         /**
     **/
-    public RegistrationComponent messages(List<Message> messages) {
+    public RegStepExecutor messages(List<MessageInfo> messages) {
 
         this.messages = messages;
         return this;
@@ -141,14 +141,14 @@ public class RegistrationComponent  {
     @ApiModelProperty(value = "")
     @JsonProperty("messages")
     @Valid
-    public List<Message> getMessages() {
+    public List<MessageInfo> getMessages() {
         return messages;
     }
-    public void setMessages(List<Message> messages) {
+    public void setMessages(List<MessageInfo> messages) {
         this.messages = messages;
     }
 
-    public RegistrationComponent addMessagesItem(Message messagesItem) {
+    public RegStepExecutor addMessagesItem(MessageInfo messagesItem) {
         if (this.messages == null) {
             this.messages = new ArrayList<>();
         }
@@ -167,29 +167,29 @@ public class RegistrationComponent  {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RegistrationComponent registrationComponent = (RegistrationComponent) o;
-        return Objects.equals(this.name, registrationComponent.name) &&
-            Objects.equals(this.id, registrationComponent.id) &&
-            Objects.equals(this.type, registrationComponent.type) &&
-            Objects.equals(this.requiredParams, registrationComponent.requiredParams) &&
-            Objects.equals(this.messages, registrationComponent.messages);
+        RegStepExecutor regStepExecutor = (RegStepExecutor) o;
+        return Objects.equals(this.givenName, regStepExecutor.givenName) &&
+            Objects.equals(this.name, regStepExecutor.name) &&
+            Objects.equals(this.id, regStepExecutor.id) &&
+            Objects.equals(this.requestedParameters, regStepExecutor.requestedParameters) &&
+            Objects.equals(this.messages, regStepExecutor.messages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, id, type, requiredParams, messages);
+        return Objects.hash(givenName, name, id, requestedParameters, messages);
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("class RegistrationComponent {\n");
+        sb.append("class RegStepExecutor {\n");
         
+        sb.append("    givenName: ").append(toIndentedString(givenName)).append("\n");
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
-        sb.append("    requiredParams: ").append(toIndentedString(requiredParams)).append("\n");
+        sb.append("    requestedParameters: ").append(toIndentedString(requestedParameters)).append("\n");
         sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
         sb.append("}");
         return sb.toString();

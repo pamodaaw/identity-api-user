@@ -36,7 +36,7 @@ import java.util.Objects;
 import javax.validation.Valid;
 import javax.xml.bind.annotation.*;
 @ApiModel(description = "Contains the data related to a message in the registration step.")
-public class Message  {
+public class MessageInfo  {
   
 
 @XmlType(name="TypeEnum")
@@ -81,7 +81,7 @@ public enum TypeEnum {
     /**
     * Indicates the type of the message.
     **/
-    public Message type(TypeEnum type) {
+    public MessageInfo type(TypeEnum type) {
 
         this.type = type;
         return this;
@@ -102,7 +102,7 @@ public enum TypeEnum {
     /**
     * The message identifier.
     **/
-    public Message messageId(String messageId) {
+    public MessageInfo messageId(String messageId) {
 
         this.messageId = messageId;
         return this;
@@ -123,7 +123,7 @@ public enum TypeEnum {
     /**
     * The message.
     **/
-    public Message message(String message) {
+    public MessageInfo message(String message) {
 
         this.message = message;
         return this;
@@ -143,7 +143,7 @@ public enum TypeEnum {
 
     /**
     **/
-    public Message context(List<Context> context) {
+    public MessageInfo context(List<Context> context) {
 
         this.context = context;
         return this;
@@ -161,7 +161,7 @@ public enum TypeEnum {
         this.context = context;
     }
 
-    public Message addContextItem(Context contextItem) {
+    public MessageInfo addContextItem(Context contextItem) {
         this.context.add(contextItem);
         return this;
     }
@@ -169,7 +169,7 @@ public enum TypeEnum {
         /**
     * The i18n key for the message. This can be used to get the localized text for the message.
     **/
-    public Message i18nKey(String i18nKey) {
+    public MessageInfo i18nKey(String i18nKey) {
 
         this.i18nKey = i18nKey;
         return this;
@@ -198,12 +198,12 @@ public enum TypeEnum {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Message message = (Message) o;
-        return Objects.equals(this.type, message.type) &&
-            Objects.equals(this.messageId, message.messageId) &&
-            Objects.equals(this.message, message.message) &&
-            Objects.equals(this.context, message.context) &&
-            Objects.equals(this.i18nKey, message.i18nKey);
+        MessageInfo messageInfo = (MessageInfo) o;
+        return Objects.equals(this.type, messageInfo.type) &&
+            Objects.equals(this.messageId, messageInfo.messageId) &&
+            Objects.equals(this.message, messageInfo.message) &&
+            Objects.equals(this.context, messageInfo.context) &&
+            Objects.equals(this.i18nKey, messageInfo.i18nKey);
     }
 
     @Override
@@ -215,7 +215,7 @@ public enum TypeEnum {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("class Message {\n");
+        sb.append("class MessageInfo {\n");
         
         sb.append("    type: ").append(toIndentedString(type)).append("\n");
         sb.append("    messageId: ").append(toIndentedString(messageId)).append("\n");

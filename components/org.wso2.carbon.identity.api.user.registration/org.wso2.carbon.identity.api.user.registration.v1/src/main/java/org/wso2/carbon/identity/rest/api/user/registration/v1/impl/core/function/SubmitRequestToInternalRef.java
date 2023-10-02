@@ -36,7 +36,6 @@ public class SubmitRequestToInternalRef implements Function<SubmitRegRequest, Re
 
         RegistrationRequest registrationRequest = new RegistrationRequest();
         registrationRequest.setFlowId(submitRegRequest.getFlowId());
-        registrationRequest.setFlowType(submitRegRequest.getFlowType().toString());
         registrationRequest.setInputType(submitRegRequest.getInputType().toString());
 
         Map<String, String> inputValues = new HashMap<>();

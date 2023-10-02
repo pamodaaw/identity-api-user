@@ -19,10 +19,11 @@
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Context;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Message;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Param;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegistrationComponent;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RequestedParamInfo;
 import org.wso2.carbon.identity.user.registration.model.response.ExecutorResponse;
+import org.wso2.carbon.identity.user.registration.model.response.Message;
 import org.wso2.carbon.identity.user.registration.model.response.RequiredParam;
 import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
 
@@ -34,37 +35,36 @@ import java.util.stream.Collectors;
 /**
  * Converts ExecutorResponse to RegistrationComponent.
  */
-public class RegStepExecutorResponseToExternalRef implements Function<ExecutorResponse, RegistrationComponent> {
+public class RegStepExecutorResponseToExternalRef implements Function<ExecutorResponse, RegStepExecutor> {
 
     @Override
-    public RegistrationComponent apply(ExecutorResponse executorResponse) {
+    public RegStepExecutor apply(ExecutorResponse executorResponse) {
 
-        RegistrationComponent registrationComponent = new RegistrationComponent();
+        RegStepExecutor regStepExecutor = new RegStepExecutor();
 
-        registrationComponent.setName(executorResponse.getName());
-        registrationComponent.setId(executorResponse.getId());
-        registrationComponent.setType(executorResponse.getType());
+        regStepExecutor.setGivenName(executorResponse.getGivenName());
+        regStepExecutor.setName(executorResponse.getName());
+        regStepExecutor.setId(executorResponse.getId());
         if (executorResponse.getMessages() != null) {
-            registrationComponent.setMessages(executorResponse.getMessages().stream()
+            regStepExecutor.setMessages(executorResponse.getMessages().stream()
                     .map(internalMsgToExternalMsg).collect(Collectors.toList()));
         }
         if (executorResponse.getRequiredParams() != null) {
-            registrationComponent.setRequiredParams(executorResponse.getRequiredParams().stream()
+            regStepExecutor.setRequestedParameters(executorResponse.getRequiredParams().stream()
                     .map(internalParamToExternalParam).collect(Collectors.toList()));
         }
 
-        return registrationComponent;
+        return regStepExecutor;
     }
 
-    Function<org.wso2.carbon.identity.user.registration.model.response.Message, Message> internalMsgToExternalMsg
-            = message -> {
+    Function<Message, MessageInfo> internalMsgToExternalMsg = message -> {
 
-        Message outputMessage = new Message();
-        Message.TypeEnum type;
+        MessageInfo outputMessage = new MessageInfo();
+        MessageInfo.TypeEnum type;
         if (RegistrationFlowConstants.MessageType.INFO.equals(message.getType())) {
-            type = Message.TypeEnum.INFO;
+            type = MessageInfo.TypeEnum.INFO;
         } else {
-            type = Message.TypeEnum.ERROR;
+            type = MessageInfo.TypeEnum.ERROR;
         }
         outputMessage.setType(type);
         outputMessage.setMessageId(message.getMessageId());
@@ -74,9 +74,9 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
         return outputMessage;
     };
 
-    Function<RequiredParam, Param> internalParamToExternalParam = requiredParam -> {
+    Function<RequiredParam, RequestedParamInfo> internalParamToExternalParam = requiredParam -> {
 
-        Param outputParam = new Param();
+        RequestedParamInfo outputParam = new RequestedParamInfo();
         outputParam.setName(requiredParam.getName());
         outputParam.setType(getDataType(requiredParam.getDataType()));
         outputParam.setIsConfidential(requiredParam.isConfidential());
@@ -88,12 +88,12 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
 
     };
 
-    private Param.TypeEnum getDataType(RegistrationFlowConstants.DataType dataType) {
+    private RequestedParamInfo.TypeEnum getDataType(RegistrationFlowConstants.DataType dataType) {
 
         if (dataType == null) {
             return null;
         }
-        return Param.TypeEnum.valueOf(dataType.name());
+        return RequestedParamInfo.TypeEnum.valueOf(dataType.name());
     }
 
     private List<Context> getContextDTOs(Map<String, String> messageContext) {

@@ -19,7 +19,7 @@
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.CurrentStep;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegistrationComponent;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
 import org.wso2.carbon.identity.user.registration.model.response.CurrentStepResponse;
 import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
 
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 /**
  * Converts the current step response to the external reference.
  */
-public class CurrentStepInfoToExternalRef implements Function<CurrentStepResponse, CurrentStep> {
+public class CurrentStepToExternalRef implements Function<CurrentStepResponse, CurrentStep> {
 
     @Override
     public CurrentStep apply(CurrentStepResponse currentStepResponse) {
@@ -39,16 +39,16 @@ public class CurrentStepInfoToExternalRef implements Function<CurrentStepRespons
 
         if (currentStepResponse != null) {
             if (RegistrationFlowConstants.StepType.MULTI_OPTION.equals(currentStepResponse.getType())) {
-                step.setStepType(CurrentStep.StepTypeEnum.MULTI_OPTIONS_PROMPT);
+                step.setStepType(CurrentStep.StepTypeEnum.MULTI_OPTIONS);
             } else {
-                step.setStepType(CurrentStep.StepTypeEnum.SINGLE_OPTION_USER_PROMPT);
+                step.setStepType(CurrentStep.StepTypeEnum.SINGLE_OPTION);
             }
 
-            List<RegistrationComponent> regComDTOs = currentStepResponse.getExecutors().stream()
+            List<RegStepExecutor> regComDTOs = currentStepResponse.getExecutors().stream()
                     .map(new RegStepExecutorResponseToExternalRef())
                     .collect(Collectors.toList());
 
-            step.setRegistrationComponents(regComDTOs);
+            step.setRegistrationStepExecutors(regComDTOs);
         }
         return step;
     }

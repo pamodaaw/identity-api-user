@@ -44,7 +44,7 @@ public class RegistrationResponseToExternalRef implements Function<RegistrationR
         }
         regPromptResponse.setFlowStatus(status);
         regPromptResponse.setCurrentStep((
-                new CurrentStepInfoToExternalRef().apply(registrationResponse.getCurrentStep())));
+                new CurrentStepToExternalRef().apply(registrationResponse.getCurrentStep())));
         return  regPromptResponse;
     }
 }

@@ -73,40 +73,6 @@ public enum FlowStatusEnum {
 }
 
     private FlowStatusEnum flowStatus;
-
-@XmlType(name="ProtocolEnum")
-@XmlEnum(String.class)
-public enum ProtocolEnum {
-
-    @XmlEnumValue("NONE") NONE(String.valueOf("NONE")), @XmlEnumValue("OIDC") OIDC(String.valueOf("OIDC"));
-
-
-    private String value;
-
-    ProtocolEnum(String v) {
-        value = v;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    public static ProtocolEnum fromValue(String value) {
-        for (ProtocolEnum b : ProtocolEnum.values()) {
-            if (b.value.equals(value)) {
-                return b;
-            }
-        }
-        throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-}
-
-    private ProtocolEnum protocol;
     private String userAssertion;
     private List<Link> links = new ArrayList<>();
 
@@ -151,27 +117,6 @@ public enum ProtocolEnum {
     }
     public void setFlowStatus(FlowStatusEnum flowStatus) {
         this.flowStatus = flowStatus;
-    }
-
-    /**
-    * Indicates whether registration is followed to a specific standard or protocol. Based on that the final result of successful registration will be decided
-    **/
-    public RegCompleteResponse protocol(ProtocolEnum protocol) {
-
-        this.protocol = protocol;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "OIDC", required = true, value = "Indicates whether registration is followed to a specific standard or protocol. Based on that the final result of successful registration will be decided")
-    @JsonProperty("protocol")
-    @Valid
-    @NotNull(message = "Property protocol cannot be null.")
-
-    public ProtocolEnum getProtocol() {
-        return protocol;
-    }
-    public void setProtocol(ProtocolEnum protocol) {
-        this.protocol = protocol;
     }
 
     /**
@@ -235,14 +180,13 @@ public enum ProtocolEnum {
         RegCompleteResponse regCompleteResponse = (RegCompleteResponse) o;
         return Objects.equals(this.flowId, regCompleteResponse.flowId) &&
             Objects.equals(this.flowStatus, regCompleteResponse.flowStatus) &&
-            Objects.equals(this.protocol, regCompleteResponse.protocol) &&
             Objects.equals(this.userAssertion, regCompleteResponse.userAssertion) &&
             Objects.equals(this.links, regCompleteResponse.links);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, flowStatus, protocol, userAssertion, links);
+        return Objects.hash(flowId, flowStatus, userAssertion, links);
     }
 
     @Override
@@ -253,7 +197,6 @@ public enum ProtocolEnum {
         
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
         sb.append("    flowStatus: ").append(toIndentedString(flowStatus)).append("\n");
-        sb.append("    protocol: ").append(toIndentedString(protocol)).append("\n");
         sb.append("    userAssertion: ").append(toIndentedString(userAssertion)).append("\n");
         sb.append("    links: ").append(toIndentedString(links)).append("\n");
         sb.append("}");

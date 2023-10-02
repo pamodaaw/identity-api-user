@@ -91,45 +91,21 @@ components:
       description: |
         The request object to initiate a registration flow configured against the given application id. If the end result of the user creation should be aligned with a specific protol, that must be indicated in the initial request.
       required:
-        - flowType
         - applicationId
-        - protocol
       properties:
-        flowType:
-          type: string
-          description: Indicates the type of the current step in the flow.
-          enum:
-            - INITIATE
-            - SUBMIT
-          example: INITIATE
         applicationId:
           type: string
           description: The id of the application for which the useer registration is triggered. This will be used to retrieve the configured user registration flow.
           example: 3bd1f207-e5b5-4b45-8a91-13b0acfb2151
-        protocol:
-          type: string
-          description: Indicates whether registration is followed to a specific standard or protocol. Based on that the final result of successful registration will be decided
-          enum:
-            - NONE
-            - OIDC
-          example: OIDC
 
     SubmitRegRequest:
       description: |
         The request object that will be communicated to the server as the intermediate steps associated with the registration flow. This will contain the user inputs for the attributes requested.
       required:
-        - flowType
         - flowId
         - inputType
         - input
       properties:
-        flowType:
-          type: string
-          description: Indicates the type of the current step in the flow.
-          enum:
-            - INITIATE
-            - SUBMIT
-          example: SUBMIT
         flowId:
           type: string
           description: A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
@@ -139,7 +115,7 @@ components:
           description: Indicates which type of data is submit as the input.
           enum:
             - SELECTION
-            - USER_DATA
+            - USER_INPUT
           example: SELECTION
         input:
           type: array
@@ -196,7 +172,6 @@ components:
       required:
         - flowId
         - flowStatus
-        - protocol
         - userAssertion
         - links
       properties:
@@ -211,13 +186,6 @@ components:
           description: |
             The status of the registration flow. This will always be COMPLETE.
           example: COMPLETE
-        protocol:
-          type: string
-          description: Indicates whether registration is followed to a specific standard or protocol. Based on that the final result of successful registration will be decided
-          enum:
-            - NONE
-            - OIDC
-          example: OIDC
         userAssertion:
           type: string
           description: An assertion for the newly created user based on the authentication protocol to be used for proceeding with the authentication. If the registration is not bound to any protocol, this will be null.
@@ -234,45 +202,45 @@ components:
         stepType:
           type: string
           enum:
-            - MULTI_OPTIONS_PROMPT
-            - SINGLE_OPTION_USER_PROMPT
-            - AGG_OPTIONS_USER_PROMPT
+            - MULTI_OPTIONS
+            - SINGLE_OPTION
+            - AGG_OPTIONS
           description: |
             The type of the current step in the registration flow.
-            - MULTI_OPTIONS_PROMPT - The current step is for the selection of the registration option.
-            - REGISTRATION_USER_PROMPT - The current step is for obtaining information from the user to proceed the registration
-          example: SINGLE_OPTION_USER_PROMPT
-        registrationComponents:
+            - MULTI_OPTIONS - The current step is for the selection of the registration option.
+            - SINGLE_OPTION - The current step is for obtaining information from the user to proceed the registration
+          example: SINGLE_OPTION
+        registrationStepExecutors:
           type: array
           items:
-            $ref: '#/components/schemas/RegistrationComponent'
+            $ref: '#/components/schemas/RegStepExecutor'
 
-    RegistrationComponent:
+    RegStepExecutor:
       type: object
-      description: Some description
+      description: The details of an executor which perform a specific task of the registration flow.
       properties:
+        givenName:
+          type: string
+          description: The unique name given to the instance of the registration component.
+          example: Basic Attribute Collector
         name:
           type: string
-          description: The name given to the registration component.
+          description: The name of the registration component.
           example: Basic Attribute Collector
         id:
           type: string
           description: The unique identifier of the registration component.
           example: e54636fe-2f7a-11ee-be56-0242ac120002
-        type:
-          type: string
-          description: The type of the registration component.
-          example: Attribute Collection
-        requiredParams:
+        requestedParameters:
           type: array
           items:
-            $ref: '#/components/schemas/Param'
+            $ref: '#/components/schemas/RequestedParamInfo'
         messages:
           type: array
           items:
-            $ref: '#/components/schemas/Message'
+            $ref: '#/components/schemas/MessageInfo'
 
-    Param:
+    RequestedParamInfo:
       type: object
       description: Contains the data related to a required parameter in the registration step. This data can be used to render the registration UI and collect data from the user
       required:
@@ -318,7 +286,7 @@ components:
           description: The i18n key for the parameter. This can be used to get the localized text for the parameter.
           example: param.username
 
-    Message:
+    MessageInfo:
       type: object
       description: Contains the data related to a message in the registration step.
       required:

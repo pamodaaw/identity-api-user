@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegistrationComponent;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
 import javax.validation.constraints.*;
 
 /**
@@ -43,7 +43,7 @@ public class CurrentStep  {
 @XmlEnum(String.class)
 public enum StepTypeEnum {
 
-    @XmlEnumValue("MULTI_OPTIONS_PROMPT") MULTI_OPTIONS_PROMPT(String.valueOf("MULTI_OPTIONS_PROMPT")), @XmlEnumValue("SINGLE_OPTION_USER_PROMPT") SINGLE_OPTION_USER_PROMPT(String.valueOf("SINGLE_OPTION_USER_PROMPT")), @XmlEnumValue("AGG_OPTIONS_USER_PROMPT") AGG_OPTIONS_USER_PROMPT(String.valueOf("AGG_OPTIONS_USER_PROMPT"));
+    @XmlEnumValue("MULTI_OPTIONS") MULTI_OPTIONS(String.valueOf("MULTI_OPTIONS")), @XmlEnumValue("SINGLE_OPTION") SINGLE_OPTION(String.valueOf("SINGLE_OPTION")), @XmlEnumValue("AGG_OPTIONS") AGG_OPTIONS(String.valueOf("AGG_OPTIONS"));
 
 
     private String value;
@@ -72,11 +72,11 @@ public enum StepTypeEnum {
 }
 
     private StepTypeEnum stepType;
-    private List<RegistrationComponent> registrationComponents = null;
+    private List<RegStepExecutor> registrationStepExecutors = null;
 
 
     /**
-    * The type of the current step in the registration flow. - MULTI_OPTIONS_PROMPT - The current step is for the selection of the registration option. - REGISTRATION_USER_PROMPT - The current step is for obtaining information from the user to proceed the registration 
+    * The type of the current step in the registration flow. - MULTI_OPTIONS - The current step is for the selection of the registration option. - SINGLE_OPTION - The current step is for obtaining information from the user to proceed the registration 
     **/
     public CurrentStep stepType(StepTypeEnum stepType) {
 
@@ -84,7 +84,7 @@ public enum StepTypeEnum {
         return this;
     }
     
-    @ApiModelProperty(example = "SINGLE_OPTION_USER_PROMPT", value = "The type of the current step in the registration flow. - MULTI_OPTIONS_PROMPT - The current step is for the selection of the registration option. - REGISTRATION_USER_PROMPT - The current step is for obtaining information from the user to proceed the registration ")
+    @ApiModelProperty(example = "SINGLE_OPTION", value = "The type of the current step in the registration flow. - MULTI_OPTIONS - The current step is for the selection of the registration option. - SINGLE_OPTION - The current step is for obtaining information from the user to proceed the registration ")
     @JsonProperty("stepType")
     @Valid
     public StepTypeEnum getStepType() {
@@ -96,27 +96,27 @@ public enum StepTypeEnum {
 
     /**
     **/
-    public CurrentStep registrationComponents(List<RegistrationComponent> registrationComponents) {
+    public CurrentStep registrationStepExecutors(List<RegStepExecutor> registrationStepExecutors) {
 
-        this.registrationComponents = registrationComponents;
+        this.registrationStepExecutors = registrationStepExecutors;
         return this;
     }
     
     @ApiModelProperty(value = "")
-    @JsonProperty("registrationComponents")
+    @JsonProperty("registrationStepExecutors")
     @Valid
-    public List<RegistrationComponent> getRegistrationComponents() {
-        return registrationComponents;
+    public List<RegStepExecutor> getRegistrationStepExecutors() {
+        return registrationStepExecutors;
     }
-    public void setRegistrationComponents(List<RegistrationComponent> registrationComponents) {
-        this.registrationComponents = registrationComponents;
+    public void setRegistrationStepExecutors(List<RegStepExecutor> registrationStepExecutors) {
+        this.registrationStepExecutors = registrationStepExecutors;
     }
 
-    public CurrentStep addRegistrationComponentsItem(RegistrationComponent registrationComponentsItem) {
-        if (this.registrationComponents == null) {
-            this.registrationComponents = new ArrayList<>();
+    public CurrentStep addRegistrationStepExecutorsItem(RegStepExecutor registrationStepExecutorsItem) {
+        if (this.registrationStepExecutors == null) {
+            this.registrationStepExecutors = new ArrayList<>();
         }
-        this.registrationComponents.add(registrationComponentsItem);
+        this.registrationStepExecutors.add(registrationStepExecutorsItem);
         return this;
     }
 
@@ -133,12 +133,12 @@ public enum StepTypeEnum {
         }
         CurrentStep currentStep = (CurrentStep) o;
         return Objects.equals(this.stepType, currentStep.stepType) &&
-            Objects.equals(this.registrationComponents, currentStep.registrationComponents);
+            Objects.equals(this.registrationStepExecutors, currentStep.registrationStepExecutors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepType, registrationComponents);
+        return Objects.hash(stepType, registrationStepExecutors);
     }
 
     @Override
@@ -148,7 +148,7 @@ public enum StepTypeEnum {
         sb.append("class CurrentStep {\n");
         
         sb.append("    stepType: ").append(toIndentedString(stepType)).append("\n");
-        sb.append("    registrationComponents: ").append(toIndentedString(registrationComponents)).append("\n");
+        sb.append("    registrationStepExecutors: ").append(toIndentedString(registrationStepExecutors)).append("\n");
         sb.append("}");
         return sb.toString();
     }

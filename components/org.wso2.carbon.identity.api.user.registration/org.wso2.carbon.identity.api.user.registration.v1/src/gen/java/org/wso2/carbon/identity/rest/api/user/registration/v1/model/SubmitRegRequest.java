@@ -38,47 +38,13 @@ import javax.xml.bind.annotation.*;
 @ApiModel(description = "The request object that will be communicated to the server as the intermediate steps associated with the registration flow. This will contain the user inputs for the attributes requested. ")
 public class SubmitRegRequest  {
   
-
-@XmlType(name="FlowTypeEnum")
-@XmlEnum(String.class)
-public enum FlowTypeEnum {
-
-    @XmlEnumValue("INITIATE") INITIATE(String.valueOf("INITIATE")), @XmlEnumValue("SUBMIT") SUBMIT(String.valueOf("SUBMIT"));
-
-
-    private String value;
-
-    FlowTypeEnum(String v) {
-        value = v;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    public static FlowTypeEnum fromValue(String value) {
-        for (FlowTypeEnum b : FlowTypeEnum.values()) {
-            if (b.value.equals(value)) {
-                return b;
-            }
-        }
-        throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-}
-
-    private FlowTypeEnum flowType;
     private String flowId;
 
 @XmlType(name="InputTypeEnum")
 @XmlEnum(String.class)
 public enum InputTypeEnum {
 
-    @XmlEnumValue("SELECTION") SELECTION(String.valueOf("SELECTION")), @XmlEnumValue("USER_DATA") USER_DATA(String.valueOf("USER_DATA"));
+    @XmlEnumValue("SELECTION") SELECTION(String.valueOf("SELECTION")), @XmlEnumValue("USER_INPUT") USER_INPUT(String.valueOf("USER_INPUT"));
 
 
     private String value;
@@ -109,27 +75,6 @@ public enum InputTypeEnum {
     private InputTypeEnum inputType;
     private List<InputObject> input = new ArrayList<>();
 
-
-    /**
-    * Indicates the type of the current step in the flow.
-    **/
-    public SubmitRegRequest flowType(FlowTypeEnum flowType) {
-
-        this.flowType = flowType;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "SUBMIT", required = true, value = "Indicates the type of the current step in the flow.")
-    @JsonProperty("flowType")
-    @Valid
-    @NotNull(message = "Property flowType cannot be null.")
-
-    public FlowTypeEnum getFlowType() {
-        return flowType;
-    }
-    public void setFlowType(FlowTypeEnum flowType) {
-        this.flowType = flowType;
-    }
 
     /**
     * A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
@@ -210,15 +155,14 @@ public enum InputTypeEnum {
             return false;
         }
         SubmitRegRequest submitRegRequest = (SubmitRegRequest) o;
-        return Objects.equals(this.flowType, submitRegRequest.flowType) &&
-            Objects.equals(this.flowId, submitRegRequest.flowId) &&
+        return Objects.equals(this.flowId, submitRegRequest.flowId) &&
             Objects.equals(this.inputType, submitRegRequest.inputType) &&
             Objects.equals(this.input, submitRegRequest.input);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowType, flowId, inputType, input);
+        return Objects.hash(flowId, inputType, input);
     }
 
     @Override
@@ -227,7 +171,6 @@ public enum InputTypeEnum {
         StringBuilder sb = new StringBuilder();
         sb.append("class SubmitRegRequest {\n");
         
-        sb.append("    flowType: ").append(toIndentedString(flowType)).append("\n");
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
         sb.append("    inputType: ").append(toIndentedString(inputType)).append("\n");
         sb.append("    input: ").append(toIndentedString(input)).append("\n");

@@ -35,96 +35,7 @@ import javax.xml.bind.annotation.*;
 @ApiModel(description = "The request object to initiate a registration flow configured against the given application id. If the end result of the user creation should be aligned with a specific protol, that must be indicated in the initial request. ")
 public class InitRegRequest  {
   
-
-@XmlType(name="FlowTypeEnum")
-@XmlEnum(String.class)
-public enum FlowTypeEnum {
-
-    @XmlEnumValue("INITIATE") INITIATE(String.valueOf("INITIATE")), @XmlEnumValue("SUBMIT") SUBMIT(String.valueOf("SUBMIT"));
-
-
-    private String value;
-
-    FlowTypeEnum(String v) {
-        value = v;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    public static FlowTypeEnum fromValue(String value) {
-        for (FlowTypeEnum b : FlowTypeEnum.values()) {
-            if (b.value.equals(value)) {
-                return b;
-            }
-        }
-        throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-}
-
-    private FlowTypeEnum flowType;
     private String applicationId;
-
-@XmlType(name="ProtocolEnum")
-@XmlEnum(String.class)
-public enum ProtocolEnum {
-
-    @XmlEnumValue("NONE") NONE(String.valueOf("NONE")), @XmlEnumValue("OIDC") OIDC(String.valueOf("OIDC"));
-
-
-    private String value;
-
-    ProtocolEnum(String v) {
-        value = v;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    public static ProtocolEnum fromValue(String value) {
-        for (ProtocolEnum b : ProtocolEnum.values()) {
-            if (b.value.equals(value)) {
-                return b;
-            }
-        }
-        throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-}
-
-    private ProtocolEnum protocol;
-
-    /**
-    * Indicates the type of the current step in the flow.
-    **/
-    public InitRegRequest flowType(FlowTypeEnum flowType) {
-
-        this.flowType = flowType;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "INITIATE", required = true, value = "Indicates the type of the current step in the flow.")
-    @JsonProperty("flowType")
-    @Valid
-    @NotNull(message = "Property flowType cannot be null.")
-
-    public FlowTypeEnum getFlowType() {
-        return flowType;
-    }
-    public void setFlowType(FlowTypeEnum flowType) {
-        this.flowType = flowType;
-    }
 
     /**
     * The id of the application for which the useer registration is triggered. This will be used to retrieve the configured user registration flow.
@@ -147,27 +58,6 @@ public enum ProtocolEnum {
         this.applicationId = applicationId;
     }
 
-    /**
-    * Indicates whether registration is followed to a specific standard or protocol. Based on that the final result of successful registration will be decided
-    **/
-    public InitRegRequest protocol(ProtocolEnum protocol) {
-
-        this.protocol = protocol;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "OIDC", required = true, value = "Indicates whether registration is followed to a specific standard or protocol. Based on that the final result of successful registration will be decided")
-    @JsonProperty("protocol")
-    @Valid
-    @NotNull(message = "Property protocol cannot be null.")
-
-    public ProtocolEnum getProtocol() {
-        return protocol;
-    }
-    public void setProtocol(ProtocolEnum protocol) {
-        this.protocol = protocol;
-    }
-
 
 
     @Override
@@ -180,14 +70,12 @@ public enum ProtocolEnum {
             return false;
         }
         InitRegRequest initRegRequest = (InitRegRequest) o;
-        return Objects.equals(this.flowType, initRegRequest.flowType) &&
-            Objects.equals(this.applicationId, initRegRequest.applicationId) &&
-            Objects.equals(this.protocol, initRegRequest.protocol);
+        return Objects.equals(this.applicationId, initRegRequest.applicationId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowType, applicationId, protocol);
+        return Objects.hash(applicationId);
     }
 
     @Override
@@ -196,9 +84,7 @@ public enum ProtocolEnum {
         StringBuilder sb = new StringBuilder();
         sb.append("class InitRegRequest {\n");
         
-        sb.append("    flowType: ").append(toIndentedString(flowType)).append("\n");
         sb.append("    applicationId: ").append(toIndentedString(applicationId)).append("\n");
-        sb.append("    protocol: ").append(toIndentedString(protocol)).append("\n");
         sb.append("}");
         return sb.toString();
     }
