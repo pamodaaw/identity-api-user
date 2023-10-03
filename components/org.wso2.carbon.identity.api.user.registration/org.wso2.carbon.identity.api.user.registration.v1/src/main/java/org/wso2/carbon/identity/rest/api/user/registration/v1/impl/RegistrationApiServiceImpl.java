@@ -19,12 +19,14 @@
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.wso2.carbon.identity.api.user.common.ContextLoader;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.RegistrationApiService;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.UserRegistrationService;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InitRegRequest;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegCompleteResponse;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
-import org.wso2.carbon.identity.user.registration.exception.RegistrationFrameworkException;
 
+import java.net.URI;
 import javax.ws.rs.core.Response;
 
 /**
@@ -38,20 +40,24 @@ public class RegistrationApiServiceImpl implements RegistrationApiService {
     @Override
     public Response initiateRegistration(InitRegRequest initRegRequest) {
 
-        try {
-            return Response.ok().entity(userRegistrationService.initiateUserRegistration(initRegRequest)).build();
-        } catch (RegistrationFrameworkException e) {
-            return Response.serverError().entity(e.getMessage()).build();
+        Object response = userRegistrationService.initiateUserRegistration(initRegRequest);
+        if (response instanceof RegCompleteResponse) {
+            String resourceId = "user-uuid";
+            URI location = ContextLoader.buildURIForHeader("/v1/registration/" + resourceId);
+            return Response.created(location).entity(response).build();
         }
+        return Response.ok().entity(response).build();
     }
 
     @Override
     public Response passThroughRegistration(SubmitRegRequest submitRegRequest) {
 
-        try {
-            return  Response.ok().entity(userRegistrationService.handleIntermediateRequests(submitRegRequest)).build();
-        } catch (RegistrationFrameworkException e) {
-            return Response.serverError().entity(e.getMessage()).build();
+        Object response = userRegistrationService.handleIntermediateRequests(submitRegRequest);
+        if (response instanceof RegCompleteResponse) {
+            String resourceId = "user-uuid";
+            URI location = ContextLoader.buildURIForHeader("/v1/registration/" + resourceId);
+            return Response.created(location).entity(response).build();
         }
+        return Response.ok().entity(response).build();
     }
 }

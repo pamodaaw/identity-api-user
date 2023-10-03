@@ -18,10 +18,13 @@
 
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core;
 
+import org.wso2.carbon.identity.api.user.common.error.APIError;
+import org.wso2.carbon.identity.api.user.common.error.ErrorDTO;
 import org.wso2.carbon.identity.api.user.registration.common.UserRegistrationServiceHolder;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function.RegistrationResponseToExternalRef;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function.SubmitRequestToInternalRef;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InitRegRequest;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegCompleteResponse;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegPromptResponse;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
 import org.wso2.carbon.identity.user.registration.UserRegistrationFlowService;
@@ -30,27 +33,52 @@ import org.wso2.carbon.identity.user.registration.model.RegistrationRequest;
 import org.wso2.carbon.identity.user.registration.model.response.RegistrationResponse;
 import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
 
+import javax.ws.rs.core.Response;
+
 /**
  * Implementation of the Rest APIs for user self registration.
  */
 public class UserRegistrationService {
 
-    public RegPromptResponse initiateUserRegistration(InitRegRequest initRegRequest)
-            throws RegistrationFrameworkException {
+    public RegPromptResponse initiateUserRegistration(InitRegRequest initRegRequest) {
 
         UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
-        RegistrationResponse response = service.initiateUserRegistration(initRegRequest.getApplicationId(),
-                RegistrationFlowConstants.SupportedProtocol.API_BASED);
+        RegistrationResponse response = null;
+        try {
+            response = service.initiateUserRegistration(initRegRequest.getApplicationId(),
+                    RegistrationFlowConstants.SupportedProtocol.API_BASED);
+        } catch (RegistrationFrameworkException e) {
+            throw buildServerError(e.getMessage());
+        }
         return new RegistrationResponseToExternalRef().apply(response);
 
     }
 
-    public RegPromptResponse handleIntermediateRequests(SubmitRegRequest submitRegRequest)
-            throws RegistrationFrameworkException {
+    public Object handleIntermediateRequests(SubmitRegRequest submitRegRequest) {
 
         UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
         RegistrationRequest request = new SubmitRequestToInternalRef().apply(submitRegRequest);
-        RegistrationResponse response = service.processIntermediateUserRegistration(request);
+        RegistrationResponse response = null;
+        try {
+            response = service.processIntermediateUserRegistration(request);
+            if (RegistrationFlowConstants.Status.COMPLETE.equals(response.getStatus())) {
+               RegCompleteResponse completeResponse = new RegCompleteResponse();
+               completeResponse.setFlowId(response.getFlowId());
+               completeResponse.setFlowStatus(RegCompleteResponse.FlowStatusEnum.COMPLETE);
+               completeResponse.setUserAssertion(null);
+               return completeResponse;
+            }
+        } catch (RegistrationFrameworkException e) {
+            throw buildServerError(e.getMessage());
+        }
         return new RegistrationResponseToExternalRef().apply(response);
+    }
+
+    private APIError buildServerError(String message) {
+
+        ErrorDTO errorDTO = new ErrorDTO();
+        errorDTO.setMessage(message);
+        errorDTO.setCode("USR-00001");
+        return new APIError(Response.Status.INTERNAL_SERVER_ERROR, errorDTO);
     }
 }
