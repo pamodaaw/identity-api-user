@@ -36,5 +36,5 @@ public interface RegistrationApiService {
 
       public Response initiateRegistration(InitRegRequest initRegRequest);
 
-      public Response passThroughRegistration(SubmitRegRequest submitRegRequest);
+      public Response submitRegistrationData(SubmitRegRequest submitRegRequest);
 }

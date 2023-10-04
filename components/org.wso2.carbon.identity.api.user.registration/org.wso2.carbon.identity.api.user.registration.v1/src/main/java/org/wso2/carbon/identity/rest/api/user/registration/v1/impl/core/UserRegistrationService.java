@@ -25,7 +25,6 @@ import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function
 import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function.SubmitRequestToInternalRef;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InitRegRequest;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegCompleteResponse;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegPromptResponse;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
 import org.wso2.carbon.identity.user.registration.UserRegistrationFlowService;
 import org.wso2.carbon.identity.user.registration.exception.RegistrationFrameworkException;
@@ -40,16 +39,24 @@ import javax.ws.rs.core.Response;
  */
 public class UserRegistrationService {
 
-    public RegPromptResponse initiateUserRegistration(InitRegRequest initRegRequest) {
+    public Object initiateUserRegistration(InitRegRequest initRegRequest) {
 
         UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
         RegistrationResponse response = null;
         try {
             response = service.initiateUserRegistration(initRegRequest.getApplicationId(),
                     RegistrationFlowConstants.SupportedProtocol.API_BASED);
+            if (RegistrationFlowConstants.Status.COMPLETE.equals(response.getStatus())) {
+                RegCompleteResponse completeResponse = new RegCompleteResponse();
+                completeResponse.setFlowId(response.getFlowId());
+                completeResponse.setFlowStatus(RegCompleteResponse.FlowStatusEnum.COMPLETE);
+                completeResponse.setUserAssertion(null);
+                return completeResponse;
+            }
         } catch (RegistrationFrameworkException e) {
             throw buildServerError(e.getMessage());
         }
+
         return new RegistrationResponseToExternalRef().apply(response);
 
     }

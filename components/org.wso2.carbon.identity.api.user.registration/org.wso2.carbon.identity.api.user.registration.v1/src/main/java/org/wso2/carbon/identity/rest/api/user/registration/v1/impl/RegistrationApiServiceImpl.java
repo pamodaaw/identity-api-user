@@ -50,7 +50,7 @@ public class RegistrationApiServiceImpl implements RegistrationApiService {
     }
 
     @Override
-    public Response passThroughRegistration(SubmitRegRequest submitRegRequest) {
+    public Response submitRegistrationData(SubmitRegRequest submitRegRequest) {
 
         Object response = userRegistrationService.handleIntermediateRequests(submitRegRequest);
         if (response instanceof RegCompleteResponse) {

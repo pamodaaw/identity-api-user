@@ -65,7 +65,7 @@ public class RegistrationApi  {
 
     @Valid
     @POST
-    @Path("/passthrough")
+    @Path("/submit")
     @Consumes({ "application/json" })
     @Produces({ "application/json" })
     @ApiOperation(value = "", notes = "This API provides the capability to continue communication of data for an initiated registration", response = RegPromptResponse.class, tags={  })
@@ -75,9 +75,9 @@ public class RegistrationApi  {
         @ApiResponse(code = 400, message = "Bad Request", response = Error.class),
         @ApiResponse(code = 500, message = "Server Error", response = Error.class)
     })
-    public Response passThroughRegistration(@ApiParam(value = "User registration initiate request body." ,required=true) @Valid SubmitRegRequest submitRegRequest) {
+    public Response submitRegistrationData(@ApiParam(value = "User registration initiate request body." ,required=true) @Valid SubmitRegRequest submitRegRequest) {
 
-        return delegate.passThroughRegistration(submitRegRequest );
+        return delegate.submitRegistrationData(submitRegRequest );
     }
 
 }
