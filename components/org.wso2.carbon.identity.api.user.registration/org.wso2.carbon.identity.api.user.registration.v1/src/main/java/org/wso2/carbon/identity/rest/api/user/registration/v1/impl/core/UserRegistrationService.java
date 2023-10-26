@@ -72,7 +72,7 @@ public class UserRegistrationService {
                RegCompleteResponse completeResponse = new RegCompleteResponse();
                completeResponse.setFlowId(response.getFlowId());
                completeResponse.setFlowStatus(RegCompleteResponse.FlowStatusEnum.COMPLETE);
-               completeResponse.setUserAssertion(null);
+               completeResponse.setUserAssertion(response.getUserAssertion());
                return completeResponse;
             }
         } catch (RegistrationFrameworkException e) {

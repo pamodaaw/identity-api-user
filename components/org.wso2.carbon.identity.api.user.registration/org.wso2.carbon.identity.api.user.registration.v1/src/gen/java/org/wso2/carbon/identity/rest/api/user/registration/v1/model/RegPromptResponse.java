@@ -24,8 +24,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.CurrentStep;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Link;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.NextStep;
 import javax.validation.constraints.*;
 
 /**
@@ -74,7 +74,7 @@ public enum FlowStatusEnum {
 }
 
     private FlowStatusEnum flowStatus;
-    private CurrentStep currentStep;
+    private NextStep nextStep;
     private List<Link> links = new ArrayList<>();
 
 
@@ -122,22 +122,22 @@ public enum FlowStatusEnum {
 
     /**
     **/
-    public RegPromptResponse currentStep(CurrentStep currentStep) {
+    public RegPromptResponse nextStep(NextStep nextStep) {
 
-        this.currentStep = currentStep;
+        this.nextStep = nextStep;
         return this;
     }
     
     @ApiModelProperty(required = true, value = "")
-    @JsonProperty("currentStep")
+    @JsonProperty("nextStep")
     @Valid
-    @NotNull(message = "Property currentStep cannot be null.")
+    @NotNull(message = "Property nextStep cannot be null.")
 
-    public CurrentStep getCurrentStep() {
-        return currentStep;
+    public NextStep getNextStep() {
+        return nextStep;
     }
-    public void setCurrentStep(CurrentStep currentStep) {
-        this.currentStep = currentStep;
+    public void setNextStep(NextStep nextStep) {
+        this.nextStep = nextStep;
     }
 
     /**
@@ -180,13 +180,13 @@ public enum FlowStatusEnum {
         RegPromptResponse regPromptResponse = (RegPromptResponse) o;
         return Objects.equals(this.flowId, regPromptResponse.flowId) &&
             Objects.equals(this.flowStatus, regPromptResponse.flowStatus) &&
-            Objects.equals(this.currentStep, regPromptResponse.currentStep) &&
+            Objects.equals(this.nextStep, regPromptResponse.nextStep) &&
             Objects.equals(this.links, regPromptResponse.links);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, flowStatus, currentStep, links);
+        return Objects.hash(flowId, flowStatus, nextStep, links);
     }
 
     @Override
@@ -197,7 +197,7 @@ public enum FlowStatusEnum {
         
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
         sb.append("    flowStatus: ").append(toIndentedString(flowStatus)).append("\n");
-        sb.append("    currentStep: ").append(toIndentedString(currentStep)).append("\n");
+        sb.append("    nextStep: ").append(toIndentedString(nextStep)).append("\n");
         sb.append("    links: ").append(toIndentedString(links)).append("\n");
         sb.append("}");
         return sb.toString();

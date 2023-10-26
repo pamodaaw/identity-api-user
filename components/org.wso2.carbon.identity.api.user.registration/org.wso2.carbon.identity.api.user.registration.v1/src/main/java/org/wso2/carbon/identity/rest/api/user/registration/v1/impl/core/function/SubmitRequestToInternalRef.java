@@ -18,12 +18,9 @@
 
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InputObject;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
 import org.wso2.carbon.identity.user.registration.model.RegistrationRequest;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -36,15 +33,12 @@ public class SubmitRequestToInternalRef implements Function<SubmitRegRequest, Re
 
         RegistrationRequest registrationRequest = new RegistrationRequest();
         registrationRequest.setFlowId(submitRegRequest.getFlowId());
-        registrationRequest.setInputType(submitRegRequest.getInputType().toString());
 
-        Map<String, String> inputValues = new HashMap<>();
-        if (submitRegRequest.getInput() != null) {
-            for (InputObject inputObject : submitRegRequest.getInput()) {
-                inputValues.put(inputObject.getKey(), inputObject.getValue());
-            }
+        if (submitRegRequest.getSelectedRegistrationExecutor() != null) {
+            registrationRequest.setExecutorId(
+                    submitRegRequest.getSelectedRegistrationExecutor().getRegistrationExecutorId());
+            registrationRequest.setInputs(submitRegRequest.getSelectedRegistrationExecutor().getParams());
         }
-        registrationRequest.setInputs(inputValues);
         return  registrationRequest;
     }
 }

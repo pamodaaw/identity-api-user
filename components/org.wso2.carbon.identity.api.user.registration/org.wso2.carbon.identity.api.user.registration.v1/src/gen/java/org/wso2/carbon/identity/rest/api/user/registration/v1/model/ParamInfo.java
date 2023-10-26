@@ -33,7 +33,7 @@ import java.util.Objects;
 import javax.validation.Valid;
 import javax.xml.bind.annotation.*;
 @ApiModel(description = "Contains the data related to a required parameter in the registration step. This data can be used to render the registration UI and collect data from the user")
-public class RequestedParamInfo  {
+public class ParamInfo  {
   
     private String name;
 
@@ -79,7 +79,7 @@ public enum TypeEnum {
     /**
     * The parameter identifier.
     **/
-    public RequestedParamInfo name(String name) {
+    public ParamInfo name(String name) {
 
         this.name = name;
         return this;
@@ -100,7 +100,7 @@ public enum TypeEnum {
     /**
     * Indicates the data type of the parameter.
     **/
-    public RequestedParamInfo type(TypeEnum type) {
+    public ParamInfo type(TypeEnum type) {
 
         this.type = type;
         return this;
@@ -121,7 +121,7 @@ public enum TypeEnum {
     /**
     * Indicates whether the parameter is confidential or not.
     **/
-    public RequestedParamInfo isConfidential(Boolean isConfidential) {
+    public ParamInfo isConfidential(Boolean isConfidential) {
 
         this.isConfidential = isConfidential;
         return this;
@@ -142,7 +142,7 @@ public enum TypeEnum {
     /**
     * Indicates whether the parameter is mandatory to be filled.
     **/
-    public RequestedParamInfo isMandatory(Boolean isMandatory) {
+    public ParamInfo isMandatory(Boolean isMandatory) {
 
         this.isMandatory = isMandatory;
         return this;
@@ -163,7 +163,7 @@ public enum TypeEnum {
     /**
     * Indicates the recommended display order of the parameter.
     **/
-    public RequestedParamInfo order(Integer order) {
+    public ParamInfo order(Integer order) {
 
         this.order = order;
         return this;
@@ -184,17 +184,15 @@ public enum TypeEnum {
     /**
     * Contains the regex pattern to validate the parameter value.
     **/
-    public RequestedParamInfo validationRegex(String validationRegex) {
+    public ParamInfo validationRegex(String validationRegex) {
 
         this.validationRegex = validationRegex;
         return this;
     }
     
-    @ApiModelProperty(example = "^[\\S]{3,50}$", required = true, value = "Contains the regex pattern to validate the parameter value.")
+    @ApiModelProperty(example = "^[\\S]{3,50}$", value = "Contains the regex pattern to validate the parameter value.")
     @JsonProperty("validationRegex")
     @Valid
-    @NotNull(message = "Property validationRegex cannot be null.")
-
     public String getValidationRegex() {
         return validationRegex;
     }
@@ -205,7 +203,7 @@ public enum TypeEnum {
     /**
     * The i18n key for the parameter. This can be used to get the localized text for the parameter.
     **/
-    public RequestedParamInfo i18nKey(String i18nKey) {
+    public ParamInfo i18nKey(String i18nKey) {
 
         this.i18nKey = i18nKey;
         return this;
@@ -234,14 +232,14 @@ public enum TypeEnum {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RequestedParamInfo requestedParamInfo = (RequestedParamInfo) o;
-        return Objects.equals(this.name, requestedParamInfo.name) &&
-            Objects.equals(this.type, requestedParamInfo.type) &&
-            Objects.equals(this.isConfidential, requestedParamInfo.isConfidential) &&
-            Objects.equals(this.isMandatory, requestedParamInfo.isMandatory) &&
-            Objects.equals(this.order, requestedParamInfo.order) &&
-            Objects.equals(this.validationRegex, requestedParamInfo.validationRegex) &&
-            Objects.equals(this.i18nKey, requestedParamInfo.i18nKey);
+        ParamInfo paramInfo = (ParamInfo) o;
+        return Objects.equals(this.name, paramInfo.name) &&
+            Objects.equals(this.type, paramInfo.type) &&
+            Objects.equals(this.isConfidential, paramInfo.isConfidential) &&
+            Objects.equals(this.isMandatory, paramInfo.isMandatory) &&
+            Objects.equals(this.order, paramInfo.order) &&
+            Objects.equals(this.validationRegex, paramInfo.validationRegex) &&
+            Objects.equals(this.i18nKey, paramInfo.i18nKey);
     }
 
     @Override
@@ -253,7 +251,7 @@ public enum TypeEnum {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("class RequestedParamInfo {\n");
+        sb.append("class ParamInfo {\n");
         
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    type: ").append(toIndentedString(type)).append("\n");

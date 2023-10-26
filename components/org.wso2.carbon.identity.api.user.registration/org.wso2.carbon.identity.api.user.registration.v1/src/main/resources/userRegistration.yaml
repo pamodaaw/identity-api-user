@@ -103,38 +103,34 @@ components:
         The request object that will be communicated to the server as the intermediate steps associated with the registration flow. This will contain the user inputs for the attributes requested.
       required:
         - flowId
-        - inputType
-        - input
+        - selectedRegistrationExecutor
       properties:
         flowId:
           type: string
           description: A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
           example: d13ec8d2-2d1e-11ee-be56-0242ac120002
-        inputType:
-          type: string
-          description: Indicates which type of data is submit as the input.
-          enum:
-            - SELECTION
-            - USER_INPUT
-          example: SELECTION
-        input:
-          type: array
-          items:
-            $ref: '#/components/schemas/InputObject'
+        selectedRegistrationExecutor:
+          $ref: '#/components/schemas/SelectedRegExecutor'
 
-    InputObject:
+    SelectedRegExecutor:
       type: object
-      description: The data entered by the user as required by the registration flow.
+      description: Contains the data related to a selected registration executor.
       required:
-        - key
-        - value
+        - registrationExecutorId
       properties:
-        key:
+        registrationExecutorId:
           type: string
-          example: username
-        value:
-          type: string
-          example: johnd
+          description: The unique identifier of the selected registration executor.
+          example: db1220160cb14f0a8d74b831e0939b62
+        params:
+          type: object
+          description: The parameters required by the registration executor to perform user onboarding.
+          additionalProperties:
+            type: string
+          example:
+            username: johnd
+            firstname: John
+            lastname: Doe
 
     RegPromptResponse:
       type: object
@@ -142,7 +138,7 @@ components:
       required:
         - flowId
         - flowStatus
-        - currentStep
+        - nextStep
         - links
       properties:
         flowId:
@@ -158,8 +154,8 @@ components:
             The status of the registration flow.
             There is a seperate response modal for the COMPLETE state with user assertion related to be used in the authentication.
           example: INCOMPLETE
-        currentStep:
-          $ref: '#/components/schemas/CurrentStep'
+        nextStep:
+          $ref: '#/components/schemas/NextStep'
         links:
           type: array
           items:
@@ -195,9 +191,9 @@ components:
             $ref: '#/components/schemas/Link'
           description: Contains the urls related to the registration flow and/or to proceed with the authentication flow.
 
-    CurrentStep:
+    NextStep:
       type: object
-      description: Contains the registration details related to the current step.
+      description: Contains the registration details related to the next step.
       properties:
         stepType:
           type: string
@@ -214,33 +210,71 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RegStepExecutor'
-
-    RegStepExecutor:
-      type: object
-      description: The details of an executor which perform a specific task of the registration flow.
-      properties:
-        givenName:
-          type: string
-          description: The unique name given to the instance of the registration component.
-          example: Basic Attribute Collector
-        name:
-          type: string
-          description: The name of the registration component.
-          example: Basic Attribute Collector
-        id:
-          type: string
-          description: The unique identifier of the registration component.
-          example: e54636fe-2f7a-11ee-be56-0242ac120002
-        requestedParameters:
-          type: array
-          items:
-            $ref: '#/components/schemas/RequestedParamInfo'
         messages:
           type: array
           items:
             $ref: '#/components/schemas/MessageInfo'
 
-    RequestedParamInfo:
+
+    RegStepExecutor:
+      type: object
+      description: The details of an executor which perform a specific task of the registration flow.
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the registration component.
+          example: e54636fe-2f7a-11ee-be56-0242ac120002
+        name:
+          type: string
+          description: The given name for the registration executor instance.
+          example: Basic Attribute Collector
+        executor:
+          type: string
+          description: The name of registration executor.
+          example: Attribute Collector
+        metadata:
+          $ref: '#/components/schemas/RegExecutorMetadata'
+
+
+    RegExecutorMetadata:
+      type: object
+      description: Contains the metadata related to a registration executor.
+      required:
+        - i18nKey
+      properties:
+        i18nKey:
+          type: string
+          description: The i18n key for the registration executor. This can be used to get the localized text for the registration executor.
+        promptType:
+          type: string
+          enum:
+            - USER_PROMPT
+            - INTERNAL_PROMPT
+            - REDIRECTION_PROMPT
+          description: |
+            The type of the prompt. The prompt can be one of the following.
+            - USER_PROMPT - The prompt is for the user to input the required parameters for the registration.
+            - INTERNAL_PROMPT - The prompt is for the system to perform an internal action which will result in
+              obtaining the required parameters
+            - REDIRECTION_PROMPT - The prompt is for the user to be redirected to a different url which will result in obtaining the required parameters.
+            ex: Register using a social authenticator which requires the user to be
+              redirect to the federation identity provider. In this case, other required data will be available in `additionalData`.
+          example: USER_PROMPT
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParamInfo'
+        additionalData:
+          type: object
+          additionalProperties:
+            type: string
+          description: |
+            Contains any additional data related to the authenticator which would be needed for the application to perform
+            authentication. ex: Fido2 challenge, redirectUrl for federated authentication.
+          example:
+            redirectUrl: https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=https%3A%2F%2Fexample-app.com%2Fredirect&state=e12f-ed27-49e5-ad0a-8bbb5671d81e%2COIDC&client_id=231644702133-ds23592jt.apps.googleusercontent.com&scope=openid
+
+    ParamInfo:
       type: object
       description: Contains the data related to a required parameter in the registration step. This data can be used to render the registration UI and collect data from the user
       required:
@@ -249,7 +283,6 @@ components:
         - isConfidential
         - isMandatory
         - order
-        - validationRegex
         - i18nKey
       properties:
         name:

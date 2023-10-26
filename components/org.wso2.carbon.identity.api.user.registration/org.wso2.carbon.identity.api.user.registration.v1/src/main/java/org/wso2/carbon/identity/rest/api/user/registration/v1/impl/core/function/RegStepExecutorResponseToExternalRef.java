@@ -18,17 +18,14 @@
 
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Context;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.ParamInfo;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegExecutorMetadata;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RequestedParamInfo;
+import org.wso2.carbon.identity.user.registration.model.response.ExecutorMetadata;
 import org.wso2.carbon.identity.user.registration.model.response.ExecutorResponse;
-import org.wso2.carbon.identity.user.registration.model.response.Message;
 import org.wso2.carbon.identity.user.registration.model.response.RequiredParam;
 import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
 
-import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -40,43 +37,22 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
     @Override
     public RegStepExecutor apply(ExecutorResponse executorResponse) {
 
+
+
         RegStepExecutor regStepExecutor = new RegStepExecutor();
-
-        regStepExecutor.setGivenName(executorResponse.getGivenName());
-        regStepExecutor.setName(executorResponse.getName());
         regStepExecutor.setId(executorResponse.getId());
-        if (executorResponse.getMessages() != null) {
-            regStepExecutor.setMessages(executorResponse.getMessages().stream()
-                    .map(internalMsgToExternalMsg).collect(Collectors.toList()));
-        }
-        if (executorResponse.getRequiredParams() != null) {
-            regStepExecutor.setRequestedParameters(executorResponse.getRequiredParams().stream()
-                    .map(internalParamToExternalParam).collect(Collectors.toList()));
-        }
+        regStepExecutor.setName(executorResponse.getName());
+        regStepExecutor.executor(executorResponse.getExecutorName());
 
+        if (executorResponse.getMetadata() != null) {
+            regStepExecutor.setMetadata(internalMetadataToExternal.apply(executorResponse.getMetadata()));
+        }
         return regStepExecutor;
     }
 
-    Function<Message, MessageInfo> internalMsgToExternalMsg = message -> {
+    Function<RequiredParam, ParamInfo> internalParamToExternalParam = requiredParam -> {
 
-        MessageInfo outputMessage = new MessageInfo();
-        MessageInfo.TypeEnum type;
-        if (RegistrationFlowConstants.MessageType.INFO.equals(message.getType())) {
-            type = MessageInfo.TypeEnum.INFO;
-        } else {
-            type = MessageInfo.TypeEnum.ERROR;
-        }
-        outputMessage.setType(type);
-        outputMessage.setMessageId(message.getMessageId());
-        outputMessage.setMessage(message.getMessage());
-        outputMessage.setContext(getContextDTOs(message.getContext()));
-        outputMessage.setI18nKey(message.getI18nkey());
-        return outputMessage;
-    };
-
-    Function<RequiredParam, RequestedParamInfo> internalParamToExternalParam = requiredParam -> {
-
-        RequestedParamInfo outputParam = new RequestedParamInfo();
+        ParamInfo outputParam = new ParamInfo();
         outputParam.setName(requiredParam.getName());
         outputParam.setType(getDataType(requiredParam.getDataType()));
         outputParam.setIsConfidential(requiredParam.isConfidential());
@@ -88,25 +64,34 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
 
     };
 
-    private RequestedParamInfo.TypeEnum getDataType(RegistrationFlowConstants.DataType dataType) {
+    Function<ExecutorMetadata, RegExecutorMetadata> internalMetadataToExternal = metadata -> {
+
+        RegExecutorMetadata meta = new RegExecutorMetadata();
+        meta.setI18nKey(metadata.getI18nKey());
+        if (metadata.getRequiredParams() != null) {
+            meta.setParams(metadata.getRequiredParams().stream()
+                    .map(internalParamToExternalParam).collect(Collectors.toList()));
+        }
+        meta.setPromptType(getPromptType(metadata.getPromptType()));
+        meta.setAdditionalData(metadata.getAdditionalData());
+        return meta;
+    };
+
+    private ParamInfo.TypeEnum getDataType(RegistrationFlowConstants.DataType dataType) {
 
         if (dataType == null) {
             return null;
         }
-        return RequestedParamInfo.TypeEnum.valueOf(dataType.name());
+        return ParamInfo.TypeEnum.valueOf(dataType.name());
     }
 
-    private List<Context> getContextDTOs(Map<String, String> messageContext) {
+    private RegExecutorMetadata.PromptTypeEnum getPromptType(RegistrationFlowConstants.PromptType promptType) {
 
-        return messageContext.entrySet().stream().map(p -> getContextDTO(p.getKey(), p.getValue()))
-                .collect(Collectors.toList());
-    }
 
-    private Context getContextDTO(String key, String value) {
-
-        Context context = new Context();
-        context.setKey(key);
-        context.setValue(value);
-        return context;
+        if (promptType == RegistrationFlowConstants.PromptType.USER_PROMPT) {
+            return RegExecutorMetadata.PromptTypeEnum.USER_PROMPT;
+        } else {
+            return null;
+        }
     }
 }

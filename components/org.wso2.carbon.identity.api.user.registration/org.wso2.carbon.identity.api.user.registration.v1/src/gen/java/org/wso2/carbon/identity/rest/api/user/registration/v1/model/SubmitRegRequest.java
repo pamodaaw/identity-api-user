@@ -22,9 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InputObject;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SelectedRegExecutor;
 import javax.validation.constraints.*;
 
 /**
@@ -39,42 +37,7 @@ import javax.xml.bind.annotation.*;
 public class SubmitRegRequest  {
   
     private String flowId;
-
-@XmlType(name="InputTypeEnum")
-@XmlEnum(String.class)
-public enum InputTypeEnum {
-
-    @XmlEnumValue("SELECTION") SELECTION(String.valueOf("SELECTION")), @XmlEnumValue("USER_INPUT") USER_INPUT(String.valueOf("USER_INPUT"));
-
-
-    private String value;
-
-    InputTypeEnum(String v) {
-        value = v;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
-
-    public static InputTypeEnum fromValue(String value) {
-        for (InputTypeEnum b : InputTypeEnum.values()) {
-            if (b.value.equals(value)) {
-                return b;
-            }
-        }
-        throw new IllegalArgumentException("Unexpected value '" + value + "'");
-    }
-}
-
-    private InputTypeEnum inputType;
-    private List<InputObject> input = new ArrayList<>();
-
+    private SelectedRegExecutor selectedRegistrationExecutor;
 
     /**
     * A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
@@ -98,52 +61,26 @@ public enum InputTypeEnum {
     }
 
     /**
-    * Indicates which type of data is submit as the input.
     **/
-    public SubmitRegRequest inputType(InputTypeEnum inputType) {
+    public SubmitRegRequest selectedRegistrationExecutor(SelectedRegExecutor selectedRegistrationExecutor) {
 
-        this.inputType = inputType;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "SELECTION", required = true, value = "Indicates which type of data is submit as the input.")
-    @JsonProperty("inputType")
-    @Valid
-    @NotNull(message = "Property inputType cannot be null.")
-
-    public InputTypeEnum getInputType() {
-        return inputType;
-    }
-    public void setInputType(InputTypeEnum inputType) {
-        this.inputType = inputType;
-    }
-
-    /**
-    **/
-    public SubmitRegRequest input(List<InputObject> input) {
-
-        this.input = input;
+        this.selectedRegistrationExecutor = selectedRegistrationExecutor;
         return this;
     }
     
     @ApiModelProperty(required = true, value = "")
-    @JsonProperty("input")
+    @JsonProperty("selectedRegistrationExecutor")
     @Valid
-    @NotNull(message = "Property input cannot be null.")
+    @NotNull(message = "Property selectedRegistrationExecutor cannot be null.")
 
-    public List<InputObject> getInput() {
-        return input;
+    public SelectedRegExecutor getSelectedRegistrationExecutor() {
+        return selectedRegistrationExecutor;
     }
-    public void setInput(List<InputObject> input) {
-        this.input = input;
-    }
-
-    public SubmitRegRequest addInputItem(InputObject inputItem) {
-        this.input.add(inputItem);
-        return this;
+    public void setSelectedRegistrationExecutor(SelectedRegExecutor selectedRegistrationExecutor) {
+        this.selectedRegistrationExecutor = selectedRegistrationExecutor;
     }
 
-    
+
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -156,13 +93,12 @@ public enum InputTypeEnum {
         }
         SubmitRegRequest submitRegRequest = (SubmitRegRequest) o;
         return Objects.equals(this.flowId, submitRegRequest.flowId) &&
-            Objects.equals(this.inputType, submitRegRequest.inputType) &&
-            Objects.equals(this.input, submitRegRequest.input);
+            Objects.equals(this.selectedRegistrationExecutor, submitRegRequest.selectedRegistrationExecutor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, inputType, input);
+        return Objects.hash(flowId, selectedRegistrationExecutor);
     }
 
     @Override
@@ -172,8 +108,7 @@ public enum InputTypeEnum {
         sb.append("class SubmitRegRequest {\n");
         
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
-        sb.append("    inputType: ").append(toIndentedString(inputType)).append("\n");
-        sb.append("    input: ").append(toIndentedString(input)).append("\n");
+        sb.append("    selectedRegistrationExecutor: ").append(toIndentedString(selectedRegistrationExecutor)).append("\n");
         sb.append("}");
         return sb.toString();
     }

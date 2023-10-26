@@ -24,19 +24,20 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
 import javax.validation.constraints.*;
 
 /**
- * Contains the registration details related to the current step.
+ * Contains the registration details related to the next step.
  **/
 
 import io.swagger.annotations.*;
 import java.util.Objects;
 import javax.validation.Valid;
 import javax.xml.bind.annotation.*;
-@ApiModel(description = "Contains the registration details related to the current step.")
-public class CurrentStep  {
+@ApiModel(description = "Contains the registration details related to the next step.")
+public class NextStep  {
   
 
 @XmlType(name="StepTypeEnum")
@@ -74,11 +75,13 @@ public enum StepTypeEnum {
     private StepTypeEnum stepType;
     private List<RegStepExecutor> registrationStepExecutors = null;
 
+    private List<MessageInfo> messages = null;
+
 
     /**
     * The type of the current step in the registration flow. - MULTI_OPTIONS - The current step is for the selection of the registration option. - SINGLE_OPTION - The current step is for obtaining information from the user to proceed the registration 
     **/
-    public CurrentStep stepType(StepTypeEnum stepType) {
+    public NextStep stepType(StepTypeEnum stepType) {
 
         this.stepType = stepType;
         return this;
@@ -96,7 +99,7 @@ public enum StepTypeEnum {
 
     /**
     **/
-    public CurrentStep registrationStepExecutors(List<RegStepExecutor> registrationStepExecutors) {
+    public NextStep registrationStepExecutors(List<RegStepExecutor> registrationStepExecutors) {
 
         this.registrationStepExecutors = registrationStepExecutors;
         return this;
@@ -112,11 +115,37 @@ public enum StepTypeEnum {
         this.registrationStepExecutors = registrationStepExecutors;
     }
 
-    public CurrentStep addRegistrationStepExecutorsItem(RegStepExecutor registrationStepExecutorsItem) {
+    public NextStep addRegistrationStepExecutorsItem(RegStepExecutor registrationStepExecutorsItem) {
         if (this.registrationStepExecutors == null) {
             this.registrationStepExecutors = new ArrayList<>();
         }
         this.registrationStepExecutors.add(registrationStepExecutorsItem);
+        return this;
+    }
+
+        /**
+    **/
+    public NextStep messages(List<MessageInfo> messages) {
+
+        this.messages = messages;
+        return this;
+    }
+    
+    @ApiModelProperty(value = "")
+    @JsonProperty("messages")
+    @Valid
+    public List<MessageInfo> getMessages() {
+        return messages;
+    }
+    public void setMessages(List<MessageInfo> messages) {
+        this.messages = messages;
+    }
+
+    public NextStep addMessagesItem(MessageInfo messagesItem) {
+        if (this.messages == null) {
+            this.messages = new ArrayList<>();
+        }
+        this.messages.add(messagesItem);
         return this;
     }
 
@@ -131,24 +160,26 @@ public enum StepTypeEnum {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        CurrentStep currentStep = (CurrentStep) o;
-        return Objects.equals(this.stepType, currentStep.stepType) &&
-            Objects.equals(this.registrationStepExecutors, currentStep.registrationStepExecutors);
+        NextStep nextStep = (NextStep) o;
+        return Objects.equals(this.stepType, nextStep.stepType) &&
+            Objects.equals(this.registrationStepExecutors, nextStep.registrationStepExecutors) &&
+            Objects.equals(this.messages, nextStep.messages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepType, registrationStepExecutors);
+        return Objects.hash(stepType, registrationStepExecutors, messages);
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("class CurrentStep {\n");
+        sb.append("class NextStep {\n");
         
         sb.append("    stepType: ").append(toIndentedString(stepType)).append("\n");
         sb.append("    registrationStepExecutors: ").append(toIndentedString(registrationStepExecutors)).append("\n");
+        sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
         sb.append("}");
         return sb.toString();
     }

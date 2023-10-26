@@ -43,8 +43,8 @@ public class RegistrationResponseToExternalRef implements Function<RegistrationR
             status = RegPromptResponse.FlowStatusEnum.FAILURE;
         }
         regPromptResponse.setFlowStatus(status);
-        regPromptResponse.setCurrentStep((
-                new CurrentStepToExternalRef().apply(registrationResponse.getCurrentStep())));
+        regPromptResponse.setNextStep((
+                new NextStepToExternalRef().apply(registrationResponse.getNextStep())));
         return  regPromptResponse;
     }
 }

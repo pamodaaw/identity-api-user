@@ -20,6 +20,8 @@ package org.wso2.carbon.identity.rest.api.user.registration.v1.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wso2.carbon.identity.api.user.common.ContextLoader;
+import org.wso2.carbon.identity.core.ServiceURLBuilder;
+import org.wso2.carbon.identity.core.URLBuilderException;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.RegistrationApiService;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.UserRegistrationService;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InitRegRequest;
@@ -54,9 +56,15 @@ public class RegistrationApiServiceImpl implements RegistrationApiService {
 
         Object response = userRegistrationService.handleIntermediateRequests(submitRegRequest);
         if (response instanceof RegCompleteResponse) {
-            String resourceId = "user-uuid";
-            URI location = ContextLoader.buildURIForHeader("/v1/registration/" + resourceId);
-            return Response.created(location).entity(response).build();
+            String resourceId = ((RegCompleteResponse) response).getUserAssertion();
+            try {
+                String context = "t/carbon.super/scim2/Users/" + resourceId;
+                String url = ServiceURLBuilder.create().addPath(context).build().getAbsolutePublicURL();
+                return Response.created(URI.create(url)).entity(response).build();
+            } catch (URLBuilderException e) {
+                String errorDescription = "Server encountered an error while building URL for response header.";
+                return Response.serverError().entity(errorDescription).build();
+            }
         }
         return Response.ok().entity(response).build();
     }

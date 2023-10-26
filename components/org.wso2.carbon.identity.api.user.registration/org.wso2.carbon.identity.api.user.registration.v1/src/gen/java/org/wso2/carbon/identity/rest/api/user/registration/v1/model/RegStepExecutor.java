@@ -22,10 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
-import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
-import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RequestedParamInfo;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegExecutorMetadata;
 import javax.validation.constraints.*;
 
 /**
@@ -39,51 +36,10 @@ import javax.xml.bind.annotation.*;
 @ApiModel(description = "The details of an executor which perform a specific task of the registration flow.")
 public class RegStepExecutor  {
   
-    private String givenName;
-    private String name;
     private String id;
-    private List<RequestedParamInfo> requestedParameters = null;
-
-    private List<MessageInfo> messages = null;
-
-
-    /**
-    * The unique name given to the instance of the registration component.
-    **/
-    public RegStepExecutor givenName(String givenName) {
-
-        this.givenName = givenName;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "Basic Attribute Collector", value = "The unique name given to the instance of the registration component.")
-    @JsonProperty("givenName")
-    @Valid
-    public String getGivenName() {
-        return givenName;
-    }
-    public void setGivenName(String givenName) {
-        this.givenName = givenName;
-    }
-
-    /**
-    * The name of the registration component.
-    **/
-    public RegStepExecutor name(String name) {
-
-        this.name = name;
-        return this;
-    }
-    
-    @ApiModelProperty(example = "Basic Attribute Collector", value = "The name of the registration component.")
-    @JsonProperty("name")
-    @Valid
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String name;
+    private String executor;
+    private RegExecutorMetadata metadata;
 
     /**
     * The unique identifier of the registration component.
@@ -105,58 +61,62 @@ public class RegStepExecutor  {
     }
 
     /**
+    * The given name for the registration executor instance.
     **/
-    public RegStepExecutor requestedParameters(List<RequestedParamInfo> requestedParameters) {
+    public RegStepExecutor name(String name) {
 
-        this.requestedParameters = requestedParameters;
+        this.name = name;
+        return this;
+    }
+    
+    @ApiModelProperty(example = "Basic Attribute Collector", value = "The given name for the registration executor instance.")
+    @JsonProperty("name")
+    @Valid
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+    * The name of registration executor.
+    **/
+    public RegStepExecutor executor(String executor) {
+
+        this.executor = executor;
+        return this;
+    }
+    
+    @ApiModelProperty(example = "Attribute Collector", value = "The name of registration executor.")
+    @JsonProperty("executor")
+    @Valid
+    public String getExecutor() {
+        return executor;
+    }
+    public void setExecutor(String executor) {
+        this.executor = executor;
+    }
+
+    /**
+    **/
+    public RegStepExecutor metadata(RegExecutorMetadata metadata) {
+
+        this.metadata = metadata;
         return this;
     }
     
     @ApiModelProperty(value = "")
-    @JsonProperty("requestedParameters")
+    @JsonProperty("metadata")
     @Valid
-    public List<RequestedParamInfo> getRequestedParameters() {
-        return requestedParameters;
+    public RegExecutorMetadata getMetadata() {
+        return metadata;
     }
-    public void setRequestedParameters(List<RequestedParamInfo> requestedParameters) {
-        this.requestedParameters = requestedParameters;
-    }
-
-    public RegStepExecutor addRequestedParametersItem(RequestedParamInfo requestedParametersItem) {
-        if (this.requestedParameters == null) {
-            this.requestedParameters = new ArrayList<>();
-        }
-        this.requestedParameters.add(requestedParametersItem);
-        return this;
+    public void setMetadata(RegExecutorMetadata metadata) {
+        this.metadata = metadata;
     }
 
-        /**
-    **/
-    public RegStepExecutor messages(List<MessageInfo> messages) {
 
-        this.messages = messages;
-        return this;
-    }
-    
-    @ApiModelProperty(value = "")
-    @JsonProperty("messages")
-    @Valid
-    public List<MessageInfo> getMessages() {
-        return messages;
-    }
-    public void setMessages(List<MessageInfo> messages) {
-        this.messages = messages;
-    }
-
-    public RegStepExecutor addMessagesItem(MessageInfo messagesItem) {
-        if (this.messages == null) {
-            this.messages = new ArrayList<>();
-        }
-        this.messages.add(messagesItem);
-        return this;
-    }
-
-    
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -168,16 +128,15 @@ public class RegStepExecutor  {
             return false;
         }
         RegStepExecutor regStepExecutor = (RegStepExecutor) o;
-        return Objects.equals(this.givenName, regStepExecutor.givenName) &&
+        return Objects.equals(this.id, regStepExecutor.id) &&
             Objects.equals(this.name, regStepExecutor.name) &&
-            Objects.equals(this.id, regStepExecutor.id) &&
-            Objects.equals(this.requestedParameters, regStepExecutor.requestedParameters) &&
-            Objects.equals(this.messages, regStepExecutor.messages);
+            Objects.equals(this.executor, regStepExecutor.executor) &&
+            Objects.equals(this.metadata, regStepExecutor.metadata);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(givenName, name, id, requestedParameters, messages);
+        return Objects.hash(id, name, executor, metadata);
     }
 
     @Override
@@ -186,11 +145,10 @@ public class RegStepExecutor  {
         StringBuilder sb = new StringBuilder();
         sb.append("class RegStepExecutor {\n");
         
-        sb.append("    givenName: ").append(toIndentedString(givenName)).append("\n");
-        sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    requestedParameters: ").append(toIndentedString(requestedParameters)).append("\n");
-        sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
+        sb.append("    name: ").append(toIndentedString(name)).append("\n");
+        sb.append("    executor: ").append(toIndentedString(executor)).append("\n");
+        sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
         sb.append("}");
         return sb.toString();
     }
