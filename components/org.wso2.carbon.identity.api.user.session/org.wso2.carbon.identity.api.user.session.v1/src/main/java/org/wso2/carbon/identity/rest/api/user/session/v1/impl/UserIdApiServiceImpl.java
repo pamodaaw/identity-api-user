@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.identity.rest.api.user.impl;
+package org.wso2.carbon.identity.rest.api.user.session.v1.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;

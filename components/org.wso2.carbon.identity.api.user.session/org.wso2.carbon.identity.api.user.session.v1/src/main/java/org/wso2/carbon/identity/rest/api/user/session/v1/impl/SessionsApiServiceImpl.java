@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.wso2.carbon.identity.rest.api.user.impl;
+package org.wso2.carbon.identity.rest.api.user.session.v1.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wso2.carbon.identity.core.util.IdentityTenantUtil;
