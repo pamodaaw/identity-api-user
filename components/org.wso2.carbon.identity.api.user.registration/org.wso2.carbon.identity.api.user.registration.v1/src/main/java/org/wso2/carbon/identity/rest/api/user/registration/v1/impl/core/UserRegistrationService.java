@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.api.user.common.ContextLoader;
 import org.wso2.carbon.identity.api.user.common.error.APIError;
 import org.wso2.carbon.identity.api.user.common.error.ErrorDTO;
 import org.wso2.carbon.identity.api.user.registration.common.UserRegistrationServiceHolder;
@@ -39,12 +42,15 @@ import javax.ws.rs.core.Response;
  */
 public class UserRegistrationService {
 
+    private static final Log LOG = LogFactory.getLog(UserRegistrationService.class);
+
     public Object initiateUserRegistration(InitRegRequest initRegRequest) {
 
         UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
-        RegistrationResponse response = null;
+        String tenantDomain = ContextLoader.getTenantDomainFromContext();
+        RegistrationResponse response;
         try {
-            response = service.initiateUserRegistration(initRegRequest.getApplicationId(),
+            response = service.initiateUserRegistration(initRegRequest.getApplicationId(), tenantDomain,
                     RegistrationFlowConstants.SupportedProtocol.API_BASED);
             if (RegistrationFlowConstants.Status.COMPLETE.equals(response.getStatus())) {
                 RegCompleteResponse completeResponse = new RegCompleteResponse();
@@ -54,7 +60,7 @@ public class UserRegistrationService {
                 return completeResponse;
             }
         } catch (RegistrationFrameworkException e) {
-            throw buildServerError(e.getMessage());
+            throw buildServerError(e);
         }
 
         return new RegistrationResponseToExternalRef().apply(response);
@@ -76,16 +82,18 @@ public class UserRegistrationService {
                return completeResponse;
             }
         } catch (RegistrationFrameworkException e) {
-            throw buildServerError(e.getMessage());
+            throw buildServerError(e);
         }
         return new RegistrationResponseToExternalRef().apply(response);
     }
 
-    private APIError buildServerError(String message) {
+    private APIError buildServerError(Exception e) {
 
         ErrorDTO errorDTO = new ErrorDTO();
-        errorDTO.setMessage(message);
+        errorDTO.setMessage(e.getMessage());
         errorDTO.setCode("USR-00001");
+
+        LOG.error("Server Error", e);
         return new APIError(Response.Status.INTERNAL_SERVER_ERROR, errorDTO);
     }
 }

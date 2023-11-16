@@ -37,8 +37,6 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
     @Override
     public RegStepExecutor apply(ExecutorResponse executorResponse) {
 
-
-
         RegStepExecutor regStepExecutor = new RegStepExecutor();
         regStepExecutor.setId(executorResponse.getId());
         regStepExecutor.setName(executorResponse.getName());

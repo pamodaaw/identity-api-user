@@ -58,6 +58,7 @@ public class NextStepToExternalRef implements Function<NextStepResponse, NextSte
         }
         return step;
     }
+
     Function<Message, MessageInfo> internalMsgToExternalMsg = message -> {
 
         MessageInfo outputMessage = new MessageInfo();
