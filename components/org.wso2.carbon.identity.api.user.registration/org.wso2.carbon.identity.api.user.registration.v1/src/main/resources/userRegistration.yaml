@@ -28,7 +28,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RegPromptResponse'
+                oneOf:
+                  - $ref: '#/components/schemas/RegPromptResponse'
+                  - $ref: '#/components/schemas/RegCompleteResponse'
         '201':
           description: Created
           content:
