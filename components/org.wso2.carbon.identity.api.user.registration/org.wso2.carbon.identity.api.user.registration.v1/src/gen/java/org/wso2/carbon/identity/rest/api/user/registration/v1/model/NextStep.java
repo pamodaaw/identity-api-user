@@ -44,7 +44,7 @@ public class NextStep  {
 @XmlEnum(String.class)
 public enum StepTypeEnum {
 
-    @XmlEnumValue("MULTI_OPTIONS") MULTI_OPTIONS(String.valueOf("MULTI_OPTIONS")), @XmlEnumValue("SINGLE_OPTION") SINGLE_OPTION(String.valueOf("SINGLE_OPTION")), @XmlEnumValue("AGG_OPTIONS") AGG_OPTIONS(String.valueOf("AGG_OPTIONS"));
+    @XmlEnumValue("MULTI_OPTIONS") MULTI_OPTIONS(String.valueOf("MULTI_OPTIONS")), @XmlEnumValue("SINGLE_OPTION") SINGLE_OPTION(String.valueOf("SINGLE_OPTION")), @XmlEnumValue("AGGREGATED_TASKS") AGGREGATED_TASKS(String.valueOf("AGGREGATED_TASKS"));
 
 
     private String value;
@@ -75,8 +75,7 @@ public enum StepTypeEnum {
     private StepTypeEnum stepType;
     private List<RegStepExecutor> registrationStepExecutors = null;
 
-    private List<MessageInfo> messages = null;
-
+    private MessageInfo message;
 
     /**
     * The type of the current step in the registration flow. - MULTI_OPTIONS - The current step is for the selection of the registration option. - SINGLE_OPTION - The current step is for obtaining information from the user to proceed the registration 
@@ -125,31 +124,23 @@ public enum StepTypeEnum {
 
         /**
     **/
-    public NextStep messages(List<MessageInfo> messages) {
+    public NextStep message(MessageInfo message) {
 
-        this.messages = messages;
+        this.message = message;
         return this;
     }
     
     @ApiModelProperty(value = "")
-    @JsonProperty("messages")
+    @JsonProperty("message")
     @Valid
-    public List<MessageInfo> getMessages() {
-        return messages;
+    public MessageInfo getMessage() {
+        return message;
     }
-    public void setMessages(List<MessageInfo> messages) {
-        this.messages = messages;
-    }
-
-    public NextStep addMessagesItem(MessageInfo messagesItem) {
-        if (this.messages == null) {
-            this.messages = new ArrayList<>();
-        }
-        this.messages.add(messagesItem);
-        return this;
+    public void setMessage(MessageInfo message) {
+        this.message = message;
     }
 
-    
+
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -163,12 +154,12 @@ public enum StepTypeEnum {
         NextStep nextStep = (NextStep) o;
         return Objects.equals(this.stepType, nextStep.stepType) &&
             Objects.equals(this.registrationStepExecutors, nextStep.registrationStepExecutors) &&
-            Objects.equals(this.messages, nextStep.messages);
+            Objects.equals(this.message, nextStep.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepType, registrationStepExecutors, messages);
+        return Objects.hash(stepType, registrationStepExecutors, message);
     }
 
     @Override
@@ -179,7 +170,7 @@ public enum StepTypeEnum {
         
         sb.append("    stepType: ").append(toIndentedString(stepType)).append("\n");
         sb.append("    registrationStepExecutors: ").append(toIndentedString(registrationStepExecutors)).append("\n");
-        sb.append("    messages: ").append(toIndentedString(messages)).append("\n");
+        sb.append("    message: ").append(toIndentedString(message)).append("\n");
         sb.append("}");
         return sb.toString();
     }

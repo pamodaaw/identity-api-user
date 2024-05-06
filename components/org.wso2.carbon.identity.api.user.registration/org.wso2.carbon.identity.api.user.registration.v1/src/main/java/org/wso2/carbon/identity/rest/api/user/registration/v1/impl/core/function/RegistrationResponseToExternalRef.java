@@ -34,6 +34,7 @@ public class RegistrationResponseToExternalRef implements Function<RegistrationR
 
         RegPromptResponse regPromptResponse = new RegPromptResponse();
         regPromptResponse.setFlowId(registrationResponse.getFlowId());
+        regPromptResponse.setFlowType(RegPromptResponse.FlowTypeEnum.REGISTRATION);
 
         RegPromptResponse.FlowStatusEnum status;
 

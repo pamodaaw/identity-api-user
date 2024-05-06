@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegExecutorMetadata;
 import javax.validation.constraints.*;
 
@@ -38,8 +39,9 @@ public class RegStepExecutor  {
   
     private String id;
     private String name;
-    private String executor;
+    private String type;
     private RegExecutorMetadata metadata;
+    private MessageInfo message;
 
     /**
     * The unique identifier of the registration component.
@@ -80,22 +82,22 @@ public class RegStepExecutor  {
     }
 
     /**
-    * The name of registration executor.
+    * The type of the registration executor.
     **/
-    public RegStepExecutor executor(String executor) {
+    public RegStepExecutor type(String type) {
 
-        this.executor = executor;
+        this.type = type;
         return this;
     }
     
-    @ApiModelProperty(example = "Attribute Collector", value = "The name of registration executor.")
-    @JsonProperty("executor")
+    @ApiModelProperty(example = "Credential", value = "The type of the registration executor.")
+    @JsonProperty("type")
     @Valid
-    public String getExecutor() {
-        return executor;
+    public String getType() {
+        return type;
     }
-    public void setExecutor(String executor) {
-        this.executor = executor;
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
@@ -116,6 +118,24 @@ public class RegStepExecutor  {
         this.metadata = metadata;
     }
 
+    /**
+    **/
+    public RegStepExecutor message(MessageInfo message) {
+
+        this.message = message;
+        return this;
+    }
+    
+    @ApiModelProperty(value = "")
+    @JsonProperty("message")
+    @Valid
+    public MessageInfo getMessage() {
+        return message;
+    }
+    public void setMessage(MessageInfo message) {
+        this.message = message;
+    }
+
 
 
     @Override
@@ -130,13 +150,14 @@ public class RegStepExecutor  {
         RegStepExecutor regStepExecutor = (RegStepExecutor) o;
         return Objects.equals(this.id, regStepExecutor.id) &&
             Objects.equals(this.name, regStepExecutor.name) &&
-            Objects.equals(this.executor, regStepExecutor.executor) &&
-            Objects.equals(this.metadata, regStepExecutor.metadata);
+            Objects.equals(this.type, regStepExecutor.type) &&
+            Objects.equals(this.metadata, regStepExecutor.metadata) &&
+            Objects.equals(this.message, regStepExecutor.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, executor, metadata);
+        return Objects.hash(id, name, type, metadata, message);
     }
 
     @Override
@@ -147,8 +168,9 @@ public class RegStepExecutor  {
         
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
-        sb.append("    executor: ").append(toIndentedString(executor)).append("\n");
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
         sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
+        sb.append("    message: ").append(toIndentedString(message)).append("\n");
         sb.append("}");
         return sb.toString();
     }

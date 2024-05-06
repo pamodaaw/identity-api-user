@@ -53,8 +53,7 @@ public class NextStepToExternalRef implements Function<NextStepResponse, NextSte
                     .collect(Collectors.toList());
 
             step.setRegistrationStepExecutors(regComDTOs);
-            step.setMessages(stepResponse.getMessages().stream().map(internalMsgToExternalMsg)
-                    .collect(Collectors.toList()));
+            step.setMessage(internalMsgToExternalMsg.apply(stepResponse.getMessage()));
         }
         return step;
     }

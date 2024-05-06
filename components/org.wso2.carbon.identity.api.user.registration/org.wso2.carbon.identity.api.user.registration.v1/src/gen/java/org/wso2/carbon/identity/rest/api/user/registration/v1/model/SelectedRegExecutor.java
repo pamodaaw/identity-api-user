@@ -38,29 +38,29 @@ import javax.xml.bind.annotation.*;
 @ApiModel(description = "Contains the data related to a selected registration executor.")
 public class SelectedRegExecutor  {
   
-    private String registrationExecutorId;
+    private String id;
     private Map<String, String> params = null;
 
 
     /**
     * The unique identifier of the selected registration executor.
     **/
-    public SelectedRegExecutor registrationExecutorId(String registrationExecutorId) {
+    public SelectedRegExecutor id(String id) {
 
-        this.registrationExecutorId = registrationExecutorId;
+        this.id = id;
         return this;
     }
     
     @ApiModelProperty(example = "db1220160cb14f0a8d74b831e0939b62", required = true, value = "The unique identifier of the selected registration executor.")
-    @JsonProperty("registrationExecutorId")
+    @JsonProperty("id")
     @Valid
-    @NotNull(message = "Property registrationExecutorId cannot be null.")
+    @NotNull(message = "Property id cannot be null.")
 
-    public String getRegistrationExecutorId() {
-        return registrationExecutorId;
+    public String getId() {
+        return id;
     }
-    public void setRegistrationExecutorId(String registrationExecutorId) {
-        this.registrationExecutorId = registrationExecutorId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -103,13 +103,13 @@ public class SelectedRegExecutor  {
             return false;
         }
         SelectedRegExecutor selectedRegExecutor = (SelectedRegExecutor) o;
-        return Objects.equals(this.registrationExecutorId, selectedRegExecutor.registrationExecutorId) &&
+        return Objects.equals(this.id, selectedRegExecutor.id) &&
             Objects.equals(this.params, selectedRegExecutor.params);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(registrationExecutorId, params);
+        return Objects.hash(id, params);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class SelectedRegExecutor  {
         StringBuilder sb = new StringBuilder();
         sb.append("class SelectedRegExecutor {\n");
         
-        sb.append("    registrationExecutorId: ").append(toIndentedString(registrationExecutorId)).append("\n");
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
         sb.append("    params: ").append(toIndentedString(params)).append("\n");
         sb.append("}");
         return sb.toString();

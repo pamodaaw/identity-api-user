@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.List;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SelectedRegExecutor;
 import javax.validation.constraints.*;
 
@@ -37,7 +39,8 @@ import javax.xml.bind.annotation.*;
 public class SubmitRegRequest  {
   
     private String flowId;
-    private SelectedRegExecutor selectedRegistrationExecutor;
+    private List<SelectedRegExecutor> engagedExecutors = null;
+
 
     /**
     * A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
@@ -61,26 +64,33 @@ public class SubmitRegRequest  {
     }
 
     /**
+    * Contains the list of registration executors engaged in this step.
     **/
-    public SubmitRegRequest selectedRegistrationExecutor(SelectedRegExecutor selectedRegistrationExecutor) {
+    public SubmitRegRequest engagedExecutors(List<SelectedRegExecutor> engagedExecutors) {
 
-        this.selectedRegistrationExecutor = selectedRegistrationExecutor;
+        this.engagedExecutors = engagedExecutors;
         return this;
     }
     
-    @ApiModelProperty(required = true, value = "")
-    @JsonProperty("selectedRegistrationExecutor")
+    @ApiModelProperty(value = "Contains the list of registration executors engaged in this step.")
+    @JsonProperty("engagedExecutors")
     @Valid
-    @NotNull(message = "Property selectedRegistrationExecutor cannot be null.")
-
-    public SelectedRegExecutor getSelectedRegistrationExecutor() {
-        return selectedRegistrationExecutor;
+    public List<SelectedRegExecutor> getEngagedExecutors() {
+        return engagedExecutors;
     }
-    public void setSelectedRegistrationExecutor(SelectedRegExecutor selectedRegistrationExecutor) {
-        this.selectedRegistrationExecutor = selectedRegistrationExecutor;
+    public void setEngagedExecutors(List<SelectedRegExecutor> engagedExecutors) {
+        this.engagedExecutors = engagedExecutors;
     }
 
+    public SubmitRegRequest addEngagedExecutorsItem(SelectedRegExecutor engagedExecutorsItem) {
+        if (this.engagedExecutors == null) {
+            this.engagedExecutors = new ArrayList<>();
+        }
+        this.engagedExecutors.add(engagedExecutorsItem);
+        return this;
+    }
 
+    
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -93,12 +103,12 @@ public class SubmitRegRequest  {
         }
         SubmitRegRequest submitRegRequest = (SubmitRegRequest) o;
         return Objects.equals(this.flowId, submitRegRequest.flowId) &&
-            Objects.equals(this.selectedRegistrationExecutor, submitRegRequest.selectedRegistrationExecutor);
+            Objects.equals(this.engagedExecutors, submitRegRequest.engagedExecutors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, selectedRegistrationExecutor);
+        return Objects.hash(flowId, engagedExecutors);
     }
 
     @Override
@@ -108,7 +118,7 @@ public class SubmitRegRequest  {
         sb.append("class SubmitRegRequest {\n");
         
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
-        sb.append("    selectedRegistrationExecutor: ").append(toIndentedString(selectedRegistrationExecutor)).append("\n");
+        sb.append("    engagedExecutors: ").append(toIndentedString(engagedExecutors)).append("\n");
         sb.append("}");
         return sb.toString();
     }

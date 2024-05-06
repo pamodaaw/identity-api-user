@@ -74,6 +74,40 @@ public enum FlowStatusEnum {
 }
 
     private FlowStatusEnum flowStatus;
+
+@XmlType(name="FlowTypeEnum")
+@XmlEnum(String.class)
+public enum FlowTypeEnum {
+
+    @XmlEnumValue("REGISTRATION") REGISTRATION(String.valueOf("REGISTRATION"));
+
+
+    private String value;
+
+    FlowTypeEnum(String v) {
+        value = v;
+    }
+
+    public String value() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
+    }
+
+    public static FlowTypeEnum fromValue(String value) {
+        for (FlowTypeEnum b : FlowTypeEnum.values()) {
+            if (b.value.equals(value)) {
+                return b;
+            }
+        }
+        throw new IllegalArgumentException("Unexpected value '" + value + "'");
+    }
+}
+
+    private FlowTypeEnum flowType;
     private NextStep nextStep;
     private List<Link> links = new ArrayList<>();
 
@@ -118,6 +152,25 @@ public enum FlowStatusEnum {
     }
     public void setFlowStatus(FlowStatusEnum flowStatus) {
         this.flowStatus = flowStatus;
+    }
+
+    /**
+    * The type of the flow. This version only contains flowType REGISTRATION.
+    **/
+    public RegPromptResponse flowType(FlowTypeEnum flowType) {
+
+        this.flowType = flowType;
+        return this;
+    }
+    
+    @ApiModelProperty(example = "REGISTRATION", value = "The type of the flow. This version only contains flowType REGISTRATION.")
+    @JsonProperty("flowType")
+    @Valid
+    public FlowTypeEnum getFlowType() {
+        return flowType;
+    }
+    public void setFlowType(FlowTypeEnum flowType) {
+        this.flowType = flowType;
     }
 
     /**
@@ -180,13 +233,14 @@ public enum FlowStatusEnum {
         RegPromptResponse regPromptResponse = (RegPromptResponse) o;
         return Objects.equals(this.flowId, regPromptResponse.flowId) &&
             Objects.equals(this.flowStatus, regPromptResponse.flowStatus) &&
+            Objects.equals(this.flowType, regPromptResponse.flowType) &&
             Objects.equals(this.nextStep, regPromptResponse.nextStep) &&
             Objects.equals(this.links, regPromptResponse.links);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, flowStatus, nextStep, links);
+        return Objects.hash(flowId, flowStatus, flowType, nextStep, links);
     }
 
     @Override
@@ -197,6 +251,7 @@ public enum FlowStatusEnum {
         
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
         sb.append("    flowStatus: ").append(toIndentedString(flowStatus)).append("\n");
+        sb.append("    flowType: ").append(toIndentedString(flowType)).append("\n");
         sb.append("    nextStep: ").append(toIndentedString(nextStep)).append("\n");
         sb.append("    links: ").append(toIndentedString(links)).append("\n");
         sb.append("}");

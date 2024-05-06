@@ -18,7 +18,9 @@
 
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SelectedRegExecutor;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
+import org.wso2.carbon.identity.user.registration.model.EngagedExecutor;
 import org.wso2.carbon.identity.user.registration.model.RegistrationRequest;
 
 import java.util.function.Function;
@@ -34,10 +36,10 @@ public class SubmitRequestToInternalRef implements Function<SubmitRegRequest, Re
         RegistrationRequest registrationRequest = new RegistrationRequest();
         registrationRequest.setFlowId(submitRegRequest.getFlowId());
 
-        if (submitRegRequest.getSelectedRegistrationExecutor() != null) {
-            registrationRequest.setExecutorId(
-                    submitRegRequest.getSelectedRegistrationExecutor().getRegistrationExecutorId());
-            registrationRequest.setInputs(submitRegRequest.getSelectedRegistrationExecutor().getParams());
+        if (submitRegRequest.getEngagedExecutors().size() > 0) {
+            for (SelectedRegExecutor executor: submitRegRequest.getEngagedExecutors()) {
+                registrationRequest.addEngagedExecutor(new EngagedExecutor(executor.getId(), executor.getParams()));
+            }
         }
         return  registrationRequest;
     }

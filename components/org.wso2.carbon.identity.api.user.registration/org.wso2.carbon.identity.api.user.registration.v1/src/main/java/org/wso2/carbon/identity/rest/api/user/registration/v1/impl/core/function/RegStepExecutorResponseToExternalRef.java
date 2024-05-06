@@ -40,7 +40,7 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
         RegStepExecutor regStepExecutor = new RegStepExecutor();
         regStepExecutor.setId(executorResponse.getId());
         regStepExecutor.setName(executorResponse.getName());
-        regStepExecutor.executor(executorResponse.getExecutorName());
+        regStepExecutor.type(executorResponse.getType());
 
         if (executorResponse.getMetadata() != null) {
             regStepExecutor.setMetadata(internalMetadataToExternal.apply(executorResponse.getMetadata()));
