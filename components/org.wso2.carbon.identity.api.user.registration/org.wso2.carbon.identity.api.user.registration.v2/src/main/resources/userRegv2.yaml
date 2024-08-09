@@ -1,0 +1,298 @@
+openapi: 3.0.0
+info:
+  description: >
+    This document specifies an **RESTful API for User Registration** in **WSO2 Identity Server** which can be used to
+    perform complete user registration in an API based manner.
+  version: 1.0.0
+  title: WSO2 Identity Server - User Registration Rest API
+  contact:
+    name: WSO2
+    url: 'https://wso2.com/products/identity-server/'
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /registration/initiate:
+    post:
+      operationId: initiateRegistration
+      description: |
+        This API provides the capability to initiate a user registration according to the configurations
+        of the application.
+      requestBody:
+        required: true
+        description: User registration initiate request body.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitRegRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegPromptResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegCompleteResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /registration/submit:
+    post:
+      operationId: submitRegistrationData
+      description: This API provides the capability to continue communication of data for an initiated registration
+      requestBody:
+        required: true
+        description: User registration initiate request body.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitRegRequest'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegPromptResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegCompleteResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    InitRegRequest:
+      description: |
+        The request object to initiate a registration flow configured against the given application id. If the end
+        result of the user creation should be aligned with a specific protol, that must be indicated in the initial request.
+      required:
+        - applicationId
+      properties:
+        applicationId:
+          type: string
+          description: |
+            The id of the application for which the useer registration is triggered. This will be used to retrieve the configured user registration flow.
+          example: 3bd1f207-e5b5-4b45-8a91-13b0acfb2151
+
+    SubmitRegRequest:
+      description: |
+        The request object that will be communicated to the server as the intermediate steps associated with the
+        registration flow. This will contain the user inputs for the attributes requested.
+      required:
+        - flowId
+        - selectedRegistrationExecutor
+      properties:
+        flowId:
+          type: string
+          description: |
+            A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
+          example: d13ec8d2-2d1e-11ee-be56-0242ac120002
+        engagedExecutors:
+          type: array
+          items:
+            $ref: '#/components/schemas/SelectedRegExecutor'
+          description: Contains the list of registration executors engaged in this step.
+
+    SelectedRegExecutor:
+      type: object
+      description: Contains the data related to a selected registration executor.
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: The unique identifier of the selected registration executor.
+          example: db1220160cb14f0a8d74b831e0939b62
+        params:
+          type: object
+          description: The parameters required by the registration executor to perform user onboarding.
+          additionalProperties:
+            type: string
+          example:
+            username: johnd
+            firstname: John
+            lastname: Doe
+
+    RegPromptResponse:
+      type: object
+      description: User registration intermediate response body.
+      required:
+        - flowId
+        - flowStatus
+        - sections
+      properties:
+        flowId:
+          type: string
+          description: |
+            A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
+          example: d13ec8d2-2d1e-11ee-be56-0242ac120002
+        flowStatus:
+          type: string
+          enum:
+            - INCOMPLETE
+            - FAILURE
+          description: |
+            The status of the registration flow.
+            There is a seperate response modal for the COMPLETE state with a registration user assertion that can be
+            used for initiating an authentication.
+          example: INCOMPLETE
+        flowType:
+          type: string
+          enum:
+            - REGISTRATION
+          description: The type of the flow. This version only contains flowType REGISTRATION.
+          example: REGISTRATION
+        sections:
+          description: Array of required elements
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
+
+    RegCompleteResponse:
+      type: object
+      description: User registration complete response body.
+      required:
+        - flowId
+        - flowStatus
+        - userAssertion
+        - links
+      properties:
+        flowId:
+          type: string
+          description: |
+            A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
+          example: d13ec8d2-2d1e-11ee-be56-0242ac120002
+        flowStatus:
+          type: string
+          enum:
+            - COMPLETE
+          description: |
+            The status of the registration flow. This will always be COMPLETE.
+          example: COMPLETE
+        userAssertion:
+          type: string
+          description: |
+            An assertion for the newly created user based on the authentication protocol to be used for proceeding with the authentication. If the registration is not bound to any protocol, this will be null.
+
+    Section:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique id for the element in the next step array.
+        order:
+          type: integer
+          description: Depictd the order in which the elements should be processed in the array.
+        mode:
+          type: string
+          enum:
+            - allOf
+            - oneOf
+          description: execution mode
+          example: allOf
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Element'
+
+    Element:
+      type: object
+      description: The user attribute information required by the registration executor to perform the registration.
+      required:
+        - name
+        - inputType
+        - dataType
+        - order
+      properties:
+        name:
+          type: string
+          description: The display name of the attribute.
+          example: username
+        value:
+          type: string
+          description: The value of the attribute if already available.
+          example: johndoe
+        dataType:
+          type: string
+          enum:
+            - STRING
+            - NUMBER
+            - BOOLEAN
+            - DATE
+          description: Indicates the data type of the parameter.
+          example: STRING
+        isMandatory:
+          type: boolean
+          description: Indicates whether the attribute is mandatory to be filled.
+          example: true
+        isReadOnly:
+          type: boolean
+          description: Indicates whether the attribute is read only if a value is already available.
+          example: true
+        order:
+          type: integer
+          description: Indicates the display order of the attribute.
+          example: 1
+        validationRegex:
+          type: string
+          description: Contains the regex pattern to validate the value of the attribute.
+          example: ^[\S]{3,50}$
+        i18nKey:
+          type: string
+          description: The i18n key for the attribute. This can be used to get the localized text for the attribute.
+          example: attribute.username
+
+    Error:
+      type: object
+      description: Contains the data related to an error.
+      required:
+        - code
+        - message
+        - description
+        - traceId
+      properties:
+        code:
+          type: string
+          example: ABA-00000
+        message:
+          type: string
+          example: Some error message.
+        description:
+          type: string
+          example: Some error description.
+        traceId:
+          type: string
+          example: e0fbcfeb-3617-43c4-8dd0-7b7d38e13047
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/pamoda.testing/NestingSampleAPI/1.0.0
