@@ -1,7 +1,8 @@
 openapi: 3.0.0
 info:
   description: >
-    This document specifies an **RESTful API for User Registration** in **WSO2 Identity Server** which can be used to perform complete user registration in an API based manner.
+    This document specifies an **RESTful API for User Registration** in **WSO2 Identity Server** which can be used to
+    perform complete user registration in an API based manner.
   version: 1.0.0
   title: WSO2 Identity Server - User Registration Rest API
   contact:
@@ -14,7 +15,9 @@ paths:
   /registration/initiate:
     post:
       operationId: initiateRegistration
-      description: This API provides the capability to initiate a user registration according to the configurations of the application.
+      description: |
+        This API provides the capability to initiate a user registration according to the configurations
+        of the application.
       requestBody:
         required: true
         description: User registration initiate request body.
@@ -89,25 +92,31 @@ components:
   schemas:
     InitRegRequest:
       description: |
-        The request object to initiate a registration flow configured against the given application id. If the end result of the user creation should be aligned with a specific protol, that must be indicated in the initial request.
+        The request object to initiate a registration flow configured against the given application id. If the end
+        result of the user creation should be aligned with a specific protol, that must be indicated in the initial request.
       required:
         - applicationId
       properties:
         applicationId:
           type: string
-          description: The id of the application for which the useer registration is triggered. This will be used to retrieve the configured user registration flow.
+          description: |
+          The id of the application for which the useer registration is triggered. This will be used to
+          retrieve the configured user registration flow.
           example: 3bd1f207-e5b5-4b45-8a91-13b0acfb2151
 
     SubmitRegRequest:
       description: |
-        The request object that will be communicated to the server as the intermediate steps associated with the registration flow. This will contain the user inputs for the attributes requested.
+        The request object that will be communicated to the server as the intermediate steps associated with the
+        registration flow. This will contain the user inputs for the attributes requested.
       required:
         - flowId
         - selectedRegistrationExecutor
       properties:
         flowId:
           type: string
-          description: A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
+          description: |
+          A unique identifier for the registration flow returned from the server. This identifier will be used to
+          track the continuation of the flow.
           example: d13ec8d2-2d1e-11ee-be56-0242ac120002
         engagedExecutors:
           type: array
@@ -146,7 +155,9 @@ components:
       properties:
         flowId:
           type: string
-          description: A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
+          description: |
+          A unique identifier for the registration flow returned from the server. This identifier will
+          be used to track the continuation of the flow.
           example: d13ec8d2-2d1e-11ee-be56-0242ac120002
         flowStatus:
           type: string
@@ -155,7 +166,8 @@ components:
             - FAILURE
           description: |
             The status of the registration flow.
-            There is a seperate response modal for the COMPLETE state with user assertion related to be used in the authentication.
+            There is a seperate response modal for the COMPLETE state with a registration user assertion that can be
+            used for initiating an authentication.
           example: INCOMPLETE
         flowType:
           type: string
@@ -164,7 +176,13 @@ components:
           description: The type of the flow. This version only contains flowType REGISTRATION.
           example: REGISTRATION
         nextStep:
-          $ref: '#/components/schemas/NextStep'
+          description: |
+          This is an element array where each element contains multiple registration options and all the
+          elements in the array should be executed to make the step successful.
+          type: array
+          items:
+            $ref: '#/components/schemas/NextStep'
+
         links:
           type: array
           items:
@@ -182,7 +200,9 @@ components:
       properties:
         flowId:
           type: string
-          description: A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
+          description: |
+          A unique identifier for the registration flow returned from the server. This identifier will be used to
+          track the continuation of the flow.
           example: d13ec8d2-2d1e-11ee-be56-0242ac120002
         flowStatus:
           type: string
@@ -193,7 +213,9 @@ components:
           example: COMPLETE
         userAssertion:
           type: string
-          description: An assertion for the newly created user based on the authentication protocol to be used for proceeding with the authentication. If the registration is not bound to any protocol, this will be null.
+          description: |
+          An assertion for the newly created user based on the authentication protocol to be used for
+          proceeding with the authentication. If the registration is not bound to any protocol, this will be null.
         links:
           type: array
           items:
@@ -202,42 +224,51 @@ components:
 
     NextStep:
       type: object
-      description: Contains the registration details related to the next step.
       properties:
-        stepType:
+        id:
+          type: string
+          description: A unique id for the element in the next step array.
+        order:
+          type: integer
+          description: Depictd the order in which the elements should be processed in the array.
+        processingMode:
           type: string
           enum:
-            - MULTI_OPTIONS
-            - SINGLE_OPTION
-            - AGGREGATED_TASKS
+            - ONE_OF_EXECUTORS
+            - ONLY_EXECUTOR
           description: |
-            The type of the current step in the registration flow.
-            - MULTI_OPTIONS - The current step is for the selection of the registration option.
-            - SINGLE_OPTION - The current step is for obtaining information from the user to proceed the registration
-          example: SINGLE_OPTION
-        registrationStepExecutors:
+            In a single element of the next step, may have one or more registration step executors. This field will
+            depict how the executors should be processed.
+            - ONE_OF_EXECUTORS - Only one of the executors should be processed.
+            - ONLY_EXECUTOR - Only one executor is there and it is mandatory to process.
+          example: ONE_OF_EXECUTORS
+        registrationExecutors:
           type: array
           items:
-            $ref: '#/components/schemas/RegStepExecutor'
+            $ref: '#/components/schemas/RegExecutor'
         message:
           $ref: '#/components/schemas/MessageInfo'
 
-    RegStepExecutor:
+    RegExecutor:
       type: object
       description: The details of an executor which perform a specific task of the registration flow.
       properties:
         id:
           type: string
-          description: The unique identifier of the registration component.
+          description: The unique identifier of the registration executor instance.
           example: e54636fe-2f7a-11ee-be56-0242ac120002
-        name:
+        displayName:
           type: string
-          description: The given name for the registration executor instance.
-          example: Basic Attribute Collector
+          description: The display name for the registration executor.
+          example: Attribute Collector
         type:
           type: string
           description: The type of the registration executor.
           example: Credential
+        order:
+          type: integer
+          description: The order in which the registration executor should be engaged.
+          example: 1
         metadata:
           $ref: '#/components/schemas/RegExecutorMetadata'
         message:
@@ -251,7 +282,9 @@ components:
       properties:
         i18nKey:
           type: string
-          description: The i18n key for the registration executor. This can be used to get the localized text for the registration executor.
+          description: |
+          The i18n key for the registration executor. This can be used to get the localized text for the registration
+          executor.
         promptType:
           type: string
           enum:
@@ -263,14 +296,21 @@ components:
             - USER_PROMPT - The prompt is for the user to input the required parameters for the registration.
             - INTERNAL_PROMPT - The prompt is for the system to perform an internal action which will result in
               obtaining the required parameters
-            - REDIRECTION_PROMPT - The prompt is for the user to be redirected to a different url which will result in obtaining the required parameters.
-            ex: Register using a social authenticator which requires the user to be
-              redirect to the federation identity provider. In this case, other required data will be available in `additionalData`.
+            - REDIRECTION_PROMPT - The prompt is for the user to be redirected to a different url which will result
+            in obtaining the required parameters.
+            ex: Register using a social authenticator which requires the user to be redirect to the federation
+            identity provider. In this case, other required data will be available in `additionalData`.
           example: USER_PROMPT
-        params:
+        attributes:
           type: array
           items:
-            $ref: '#/components/schemas/ParamInfo'
+            $ref: '#/components/schemas/AttributeInfo'
+          description: Contains the user attributes required by the registration executor.
+        credentials:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialInfo'
+          description: Contains the credentials required by the registration executor.
         additionalData:
           type: object
           additionalProperties:
@@ -281,22 +321,24 @@ components:
           example:
             redirectUrl: https://accounts.google.com/o/oauth2/auth?response_type=code&redirect_uri=https%3A%2F%2Fexample-app.com%2Fredirect&state=e12f-ed27-49e5-ad0a-8bbb5671d81e%2COIDC&client_id=231644702133-ds23592jt.apps.googleusercontent.com&scope=openid
 
-    ParamInfo:
+    AttributeInfo:
       type: object
-      description: Contains the data related to a required parameter in the registration step. This data can be used to render the registration UI and collect data from the user
+      description: The user attribute information required by the registration executor to perform the registration.
       required:
         - name
-        - type
-        - isConfidential
-        - isMandatory
+        - dataType
         - order
         - i18nKey
       properties:
         name:
           type: string
-          description: The parameter identifier.
+          description: The display name of the attribute.
           example: username
-        type:
+        value:
+          type: string
+          description: The value of the attribute if already available.
+          example: johndoe
+        dataType:
           type: string
           enum:
             - STRING
@@ -305,34 +347,68 @@ components:
             - DATE
           description: Indicates the data type of the parameter.
           example: STRING
-        isConfidential:
-          type: boolean
-          description: Indicates whether the parameter is confidential or not.
-          example: false
         isMandatory:
           type: boolean
-          description: Indicates whether the parameter is mandatory to be filled.
+          description: Indicates whether the attribute is mandatory to be filled.
+          example: true
+        isReadOnly:
+          type: boolean
+          description: Indicates whether the attribute is read only if a value is already available.
           example: true
         order:
           type: integer
-          description: Indicates the recommended display order of the parameter.
+          description: Indicates the display order of the attribute.
           example: 1
         validationRegex:
           type: string
-          description: Contains the regex pattern to validate the parameter value.
+          description: Contains the regex pattern to validate the value of the attribute.
           example: ^[\S]{3,50}$
         i18nKey:
           type: string
-          description: The i18n key for the parameter. This can be used to get the localized text for the parameter.
-          example: param.username
+          description: The i18n key for the attribute. This can be used to get the localized text for the attribute.
+          example: attribute.username
+
+    CredentialInfo:
+      type: object
+      description: |
+      Credential information required by the registration executor to perform the registration. This can be a
+      password, OTP, etc and it is mandatory.
+      required:
+        - name
+        - dataType
+        - order
+        - i18nKey
+      properties:
+        name:
+          type: string
+          description: The display name of the credential.
+          example: password
+        dataType:
+          type: string
+          enum:
+            - STRING
+            - OTP
+          description: Indicates the data type of the credential.
+          example: STRING
+        order:
+          type: integer
+          description: Indicates the display order of the attribute.
+          example: 1
+        validationRegex:
+          type: string
+          description: Contains the regex pattern to validate the value of the credential.
+          example: ^[\S]{3,50}$
+        i18nKey:
+          type: string
+          description: The i18n key for the credential name. This can be used to get the localized text.
+          example: credential.password
 
     MessageInfo:
       type: object
-      description: Contains the data related to a message in the registration step.
+      description: Contains the message information related to the registration step element.
       required:
         - type
-        - messageId
-        - message
+        - content
         - context
         - i18nKey
       properties:
@@ -343,11 +419,7 @@ components:
             - ERROR
           description: Indicates the type of the message.
           example: INFO
-        messageId:
-          type: string
-          description: The message identifier.
-          example: email_otp_sent
-        message:
+        content:
           type: string
           description: The actual message body.
           example: A verification code is sent to the provided email.

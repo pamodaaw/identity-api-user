@@ -18,16 +18,23 @@
 
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Context;
+import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.ParamInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegExecutorMetadata;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
-import org.wso2.carbon.identity.user.registration.model.response.ExecutorMetadata;
-import org.wso2.carbon.identity.user.registration.model.response.ExecutorResponse;
-import org.wso2.carbon.identity.user.registration.model.response.RequiredParam;
-import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
+import org.wso2.carbon.identity.user.self.registration.model.response.ExecutorMetadata;
+import org.wso2.carbon.identity.user.self.registration.model.response.ExecutorResponse;
+import org.wso2.carbon.identity.user.self.registration.model.response.Message;
+import org.wso2.carbon.identity.user.self.registration.model.response.RequiredParam;
+import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants.PromptType.USER_PROMPT;
 
 /**
  * Converts ExecutorResponse to RegistrationComponent.
@@ -44,6 +51,9 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
 
         if (executorResponse.getMetadata() != null) {
             regStepExecutor.setMetadata(internalMetadataToExternal.apply(executorResponse.getMetadata()));
+        }
+        if (executorResponse.getMessage() != null) {
+            regStepExecutor.setMessage(internalMsgToExternalMsg.apply(executorResponse.getMessage()));
         }
         return regStepExecutor;
     }
@@ -75,7 +85,7 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
         return meta;
     };
 
-    private ParamInfo.TypeEnum getDataType(RegistrationFlowConstants.DataType dataType) {
+    private ParamInfo.TypeEnum getDataType(RegistrationConstants.DataType dataType) {
 
         if (dataType == null) {
             return null;
@@ -83,13 +93,45 @@ public class RegStepExecutorResponseToExternalRef implements Function<ExecutorRe
         return ParamInfo.TypeEnum.valueOf(dataType.name());
     }
 
-    private RegExecutorMetadata.PromptTypeEnum getPromptType(RegistrationFlowConstants.PromptType promptType) {
+    private RegExecutorMetadata.PromptTypeEnum getPromptType(RegistrationConstants.PromptType promptType) {
 
 
-        if (promptType == RegistrationFlowConstants.PromptType.USER_PROMPT) {
+        if (promptType == USER_PROMPT) {
             return RegExecutorMetadata.PromptTypeEnum.USER_PROMPT;
         } else {
             return null;
         }
+    }
+
+    Function<Message, MessageInfo> internalMsgToExternalMsg = message -> {
+
+        MessageInfo outputMessage = new MessageInfo();
+        MessageInfo.TypeEnum type;
+        if (RegistrationConstants.MessageType.INFO.equals(message.getType())) {
+            type = MessageInfo.TypeEnum.INFO;
+        } else {
+            type = MessageInfo.TypeEnum.ERROR;
+        }
+        outputMessage.setType(type);
+        outputMessage.setMessageId(message.getMessageId());
+        outputMessage.setMessage(message.getMessage());
+        outputMessage.setContext(getContextDTOs(message.getContext()));
+        outputMessage.setI18nKey(message.getI18nkey());
+        return outputMessage;
+    };
+
+
+    private List<Context> getContextDTOs(Map<String, String> messageContext) {
+
+        return messageContext.entrySet().stream().map(p -> getContextDTO(p.getKey(), p.getValue()))
+                .collect(Collectors.toList());
+    }
+
+    private Context getContextDTO(String key, String value) {
+
+        Context context = new Context();
+        context.setKey(key);
+        context.setValue(value);
+        return context;
     }
 }

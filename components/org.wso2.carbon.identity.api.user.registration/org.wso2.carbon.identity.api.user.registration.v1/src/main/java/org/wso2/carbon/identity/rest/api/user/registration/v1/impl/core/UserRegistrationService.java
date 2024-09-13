@@ -29,13 +29,16 @@ import org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.InitRegRequest;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegCompleteResponse;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
-import org.wso2.carbon.identity.user.registration.UserRegistrationFlowService;
-import org.wso2.carbon.identity.user.registration.exception.RegistrationFrameworkException;
-import org.wso2.carbon.identity.user.registration.model.RegistrationRequest;
-import org.wso2.carbon.identity.user.registration.model.response.RegistrationResponse;
-import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
+import org.wso2.carbon.identity.user.self.registration.UserRegistrationFlowService;
+import org.wso2.carbon.identity.user.self.registration.exception.RegistrationFrameworkException;
+import org.wso2.carbon.identity.user.self.registration.model.RegistrationRequest;
+import org.wso2.carbon.identity.user.self.registration.model.response.RegistrationResponse;
+import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
 
 import javax.ws.rs.core.Response;
+
+import static org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants.StepStatus.COMPLETE;
+import static org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants.SupportedProtocol.API_BASED;
 
 /**
  * Implementation of the Rest APIs for user self registration.
@@ -50,9 +53,8 @@ public class UserRegistrationService {
         String tenantDomain = ContextLoader.getTenantDomainFromContext();
         RegistrationResponse response;
         try {
-            response = service.initiateUserRegistration(initRegRequest.getApplicationId(), tenantDomain,
-                    RegistrationFlowConstants.SupportedProtocol.API_BASED);
-            if (RegistrationFlowConstants.Status.COMPLETE.equals(response.getStatus())) {
+            response = service.initiateUserRegistration(initRegRequest.getApplicationId(), tenantDomain, API_BASED);
+            if (COMPLETE.equals(response.getStatus())) {
                 RegCompleteResponse completeResponse = new RegCompleteResponse();
                 completeResponse.setFlowId(response.getFlowId());
                 completeResponse.setFlowStatus(RegCompleteResponse.FlowStatusEnum.COMPLETE);
@@ -74,7 +76,7 @@ public class UserRegistrationService {
         RegistrationResponse response = null;
         try {
             response = service.processIntermediateUserRegistration(request);
-            if (RegistrationFlowConstants.Status.COMPLETE.equals(response.getStatus())) {
+            if (RegistrationConstants.Status.COMPLETE.equals(response.getStatus())) {
                RegCompleteResponse completeResponse = new RegCompleteResponse();
                completeResponse.setFlowId(response.getFlowId());
                completeResponse.setFlowStatus(RegCompleteResponse.FlowStatusEnum.COMPLETE);

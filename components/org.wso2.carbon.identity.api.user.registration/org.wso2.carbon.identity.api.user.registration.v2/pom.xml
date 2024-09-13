@@ -180,7 +180,7 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.identity.framework</groupId>
-            <artifactId>org.wso2.carbon.identity.user.registration</artifactId>
+            <artifactId>org.wso2.carbon.identity.user.self.registration</artifactId>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>

@@ -18,7 +18,7 @@ package org.wso2.carbon.identity.api.user.registration.common.factory;
 
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
-import org.wso2.carbon.identity.user.registration.UserRegistrationFlowService;
+import org.wso2.carbon.identity.user.self.registration.UserRegistrationFlowService;
 
 /**
  * Factory Beans serves as a factory for creating other beans within the IOC container. This factory bean is used to

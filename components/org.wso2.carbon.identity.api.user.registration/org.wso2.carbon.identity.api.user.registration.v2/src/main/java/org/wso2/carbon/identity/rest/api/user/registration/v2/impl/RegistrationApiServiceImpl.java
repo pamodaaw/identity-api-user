@@ -43,7 +43,7 @@ public class RegistrationApiServiceImpl implements RegistrationApiService {
     @Override
     public Response submitRegistrationData(SubmitRegRequest submitRegRequest) {
 
-        // do some magic!
-        return Response.ok().entity("magic!").build();
+        Object response = userRegistrationService.continueRegistration(submitRegRequest);
+        return Response.ok().entity(response).build();
     }
 }

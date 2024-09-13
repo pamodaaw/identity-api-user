@@ -19,8 +19,8 @@
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegPromptResponse;
-import org.wso2.carbon.identity.user.registration.model.response.RegistrationResponse;
-import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
+import org.wso2.carbon.identity.user.self.registration.model.response.RegistrationResponse;
+import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
 
 import java.util.function.Function;
 
@@ -38,10 +38,10 @@ public class RegistrationResponseToExternalRef implements Function<RegistrationR
 
         RegPromptResponse.FlowStatusEnum status;
 
-        if (RegistrationFlowConstants.Status.INCOMPLETE.equals(registrationResponse.getStatus())) {
-            status = RegPromptResponse.FlowStatusEnum.INCOMPLETE;
-        } else {
+        if (RegistrationConstants.Status.FAILED.equals(registrationResponse.getStatus())) {
             status = RegPromptResponse.FlowStatusEnum.FAILURE;
+        } else {
+            status = RegPromptResponse.FlowStatusEnum.INCOMPLETE;
         }
         regPromptResponse.setFlowStatus(status);
         regPromptResponse.setNextStep((

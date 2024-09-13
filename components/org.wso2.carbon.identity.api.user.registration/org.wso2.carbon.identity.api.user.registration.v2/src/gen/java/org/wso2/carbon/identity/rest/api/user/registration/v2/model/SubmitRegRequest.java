@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SelectedRegExecutor;
+import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SectionData;
 import javax.validation.constraints.*;
 
 /**
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.*;
 public class SubmitRegRequest  {
   
     private String flowId;
-    private List<SelectedRegExecutor> engagedExecutors = null;
+    private List<SectionData> userData = new ArrayList<>();
 
 
     /**
@@ -64,29 +64,28 @@ public class SubmitRegRequest  {
     }
 
     /**
-    * Contains the list of registration executors engaged in this step.
+    * Contains the list of input data.
     **/
-    public SubmitRegRequest engagedExecutors(List<SelectedRegExecutor> engagedExecutors) {
+    public SubmitRegRequest userData(List<SectionData> userData) {
 
-        this.engagedExecutors = engagedExecutors;
+        this.userData = userData;
         return this;
     }
     
-    @ApiModelProperty(value = "Contains the list of registration executors engaged in this step.")
-    @JsonProperty("engagedExecutors")
+    @ApiModelProperty(required = true, value = "Contains the list of input data.")
+    @JsonProperty("userData")
     @Valid
-    public List<SelectedRegExecutor> getEngagedExecutors() {
-        return engagedExecutors;
+    @NotNull(message = "Property userData cannot be null.")
+
+    public List<SectionData> getUserData() {
+        return userData;
     }
-    public void setEngagedExecutors(List<SelectedRegExecutor> engagedExecutors) {
-        this.engagedExecutors = engagedExecutors;
+    public void setUserData(List<SectionData> userData) {
+        this.userData = userData;
     }
 
-    public SubmitRegRequest addEngagedExecutorsItem(SelectedRegExecutor engagedExecutorsItem) {
-        if (this.engagedExecutors == null) {
-            this.engagedExecutors = new ArrayList<>();
-        }
-        this.engagedExecutors.add(engagedExecutorsItem);
+    public SubmitRegRequest addUserDataItem(SectionData userDataItem) {
+        this.userData.add(userDataItem);
         return this;
     }
 
@@ -103,12 +102,12 @@ public class SubmitRegRequest  {
         }
         SubmitRegRequest submitRegRequest = (SubmitRegRequest) o;
         return Objects.equals(this.flowId, submitRegRequest.flowId) &&
-            Objects.equals(this.engagedExecutors, submitRegRequest.engagedExecutors);
+            Objects.equals(this.userData, submitRegRequest.userData);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, engagedExecutors);
+        return Objects.hash(flowId, userData);
     }
 
     @Override
@@ -118,7 +117,7 @@ public class SubmitRegRequest  {
         sb.append("class SubmitRegRequest {\n");
         
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
-        sb.append("    engagedExecutors: ").append(toIndentedString(engagedExecutors)).append("\n");
+        sb.append("    userData: ").append(toIndentedString(userData)).append("\n");
         sb.append("}");
         return sb.toString();
     }

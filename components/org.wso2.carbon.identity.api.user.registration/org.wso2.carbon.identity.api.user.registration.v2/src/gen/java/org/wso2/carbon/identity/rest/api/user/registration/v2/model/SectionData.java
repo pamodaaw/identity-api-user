@@ -22,36 +22,40 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v2.model.Prompt;
+import java.util.Map;
 import javax.validation.constraints.*;
 
+/**
+ * Contains the data related to a section.
+ **/
 
 import io.swagger.annotations.*;
 import java.util.Objects;
 import javax.validation.Valid;
 import javax.xml.bind.annotation.*;
-
-public class Section  {
+@ApiModel(description = "Contains the data related to a section.")
+public class SectionData  {
   
     private String id;
-    private Integer order;
-    private List<Prompt> prompts = null;
+    private Map<String, String> inputs = new HashMap<>();
 
 
     /**
-    * A unique id for the element in the next step array.
+    * The unique identifier of the selected registration executor.
     **/
-    public Section id(String id) {
+    public SectionData id(String id) {
 
         this.id = id;
         return this;
     }
     
-    @ApiModelProperty(value = "A unique id for the element in the next step array.")
+    @ApiModelProperty(example = "db1220160cb14f0a8d74b831e0939b62", required = true, value = "The unique identifier of the selected registration executor.")
     @JsonProperty("id")
     @Valid
+    @NotNull(message = "Property id cannot be null.")
+
     public String getId() {
         return id;
     }
@@ -60,48 +64,29 @@ public class Section  {
     }
 
     /**
-    * Depictd the order in which the elements should be processed in the array.
+    * The parameters required by the registration executor to perform user onboarding.
     **/
-    public Section order(Integer order) {
+    public SectionData inputs(Map<String, String> inputs) {
 
-        this.order = order;
+        this.inputs = inputs;
         return this;
     }
     
-    @ApiModelProperty(value = "Depictd the order in which the elements should be processed in the array.")
-    @JsonProperty("order")
+    @ApiModelProperty(example = "{\"username\":\"johnd\",\"firstname\":\"John\",\"lastname\":\"Doe\"}", required = true, value = "The parameters required by the registration executor to perform user onboarding.")
+    @JsonProperty("inputs")
     @Valid
-    public Integer getOrder() {
-        return order;
+    @NotNull(message = "Property inputs cannot be null.")
+
+    public Map<String, String> getInputs() {
+        return inputs;
     }
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setInputs(Map<String, String> inputs) {
+        this.inputs = inputs;
     }
 
-    /**
-    * List of prompts in the section
-    **/
-    public Section prompts(List<Prompt> prompts) {
 
-        this.prompts = prompts;
-        return this;
-    }
-    
-    @ApiModelProperty(value = "List of prompts in the section")
-    @JsonProperty("prompts")
-    @Valid
-    public List<Prompt> getPrompts() {
-        return prompts;
-    }
-    public void setPrompts(List<Prompt> prompts) {
-        this.prompts = prompts;
-    }
-
-    public Section addPromptsItem(Prompt promptsItem) {
-        if (this.prompts == null) {
-            this.prompts = new ArrayList<>();
-        }
-        this.prompts.add(promptsItem);
+    public SectionData putInputsItem(String key, String inputsItem) {
+        this.inputs.put(key, inputsItem);
         return this;
     }
 
@@ -116,26 +101,24 @@ public class Section  {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Section section = (Section) o;
-        return Objects.equals(this.id, section.id) &&
-            Objects.equals(this.order, section.order) &&
-            Objects.equals(this.prompts, section.prompts);
+        SectionData sectionData = (SectionData) o;
+        return Objects.equals(this.id, sectionData.id) &&
+            Objects.equals(this.inputs, sectionData.inputs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, order, prompts);
+        return Objects.hash(id, inputs);
     }
 
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("class Section {\n");
+        sb.append("class SectionData {\n");
         
         sb.append("    id: ").append(toIndentedString(id)).append("\n");
-        sb.append("    order: ").append(toIndentedString(order)).append("\n");
-        sb.append("    prompts: ").append(toIndentedString(prompts)).append("\n");
+        sb.append("    inputs: ").append(toIndentedString(inputs)).append("\n");
         sb.append("}");
         return sb.toString();
     }

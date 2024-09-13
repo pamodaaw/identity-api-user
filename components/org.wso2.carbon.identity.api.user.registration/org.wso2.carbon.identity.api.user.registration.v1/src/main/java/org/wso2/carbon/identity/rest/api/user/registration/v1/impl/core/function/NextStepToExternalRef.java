@@ -22,9 +22,9 @@ import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Context;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.NextStep;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
-import org.wso2.carbon.identity.user.registration.model.response.Message;
-import org.wso2.carbon.identity.user.registration.model.response.NextStepResponse;
-import org.wso2.carbon.identity.user.registration.util.RegistrationFlowConstants;
+import org.wso2.carbon.identity.user.self.registration.model.response.Message;
+import org.wso2.carbon.identity.user.self.registration.model.response.NextStepResponse;
+import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class NextStepToExternalRef implements Function<NextStepResponse, NextSte
         NextStep step = new NextStep();
 
         if (stepResponse != null) {
-            if (RegistrationFlowConstants.StepType.MULTI_OPTION.equals(stepResponse.getType())) {
+            if (RegistrationConstants.StepType.MULTI_OPTION.equals(stepResponse.getType())) {
                 step.setStepType(NextStep.StepTypeEnum.MULTI_OPTIONS);
             } else {
                 step.setStepType(NextStep.StepTypeEnum.SINGLE_OPTION);
@@ -53,7 +53,9 @@ public class NextStepToExternalRef implements Function<NextStepResponse, NextSte
                     .collect(Collectors.toList());
 
             step.setRegistrationStepExecutors(regComDTOs);
-            step.setMessage(internalMsgToExternalMsg.apply(stepResponse.getMessage()));
+            if (stepResponse.getMessage() != null) {
+                step.setMessage(internalMsgToExternalMsg.apply(stepResponse.getMessage()));
+            }
         }
         return step;
     }
@@ -62,7 +64,7 @@ public class NextStepToExternalRef implements Function<NextStepResponse, NextSte
 
         MessageInfo outputMessage = new MessageInfo();
         MessageInfo.TypeEnum type;
-        if (RegistrationFlowConstants.MessageType.INFO.equals(message.getType())) {
+        if (RegistrationConstants.MessageType.INFO.equals(message.getType())) {
             type = MessageInfo.TypeEnum.INFO;
         } else {
             type = MessageInfo.TypeEnum.ERROR;

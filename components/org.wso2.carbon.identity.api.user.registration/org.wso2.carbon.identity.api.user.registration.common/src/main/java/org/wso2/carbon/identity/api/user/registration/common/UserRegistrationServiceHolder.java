@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.identity.api.user.registration.common;
 
-import org.wso2.carbon.identity.user.registration.UserRegistrationFlowService;
+import org.wso2.carbon.identity.user.self.registration.UserRegistrationFlowService;
 import org.wso2.carbon.user.core.service.RealmService;
 
 /**

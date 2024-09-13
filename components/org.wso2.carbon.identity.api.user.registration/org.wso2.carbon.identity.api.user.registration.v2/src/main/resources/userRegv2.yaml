@@ -109,30 +109,31 @@ components:
         registration flow. This will contain the user inputs for the attributes requested.
       required:
         - flowId
-        - selectedRegistrationExecutor
+        - userData
       properties:
         flowId:
           type: string
           description: |
             A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
           example: d13ec8d2-2d1e-11ee-be56-0242ac120002
-        engagedExecutors:
+        userData:
           type: array
           items:
-            $ref: '#/components/schemas/SelectedRegExecutor'
-          description: Contains the list of registration executors engaged in this step.
+            $ref: '#/components/schemas/SectionData'
+          description: Contains the list of input data.
 
-    SelectedRegExecutor:
+    SectionData:
       type: object
-      description: Contains the data related to a selected registration executor.
+      description: Contains the data related to a section.
       required:
         - id
+        - inputs
       properties:
         id:
           type: string
           description: The unique identifier of the selected registration executor.
           example: db1220160cb14f0a8d74b831e0939b62
-        params:
+        inputs:
           type: object
           description: The parameters required by the registration executor to perform user onboarding.
           additionalProperties:
@@ -212,64 +213,64 @@ components:
         order:
           type: integer
           description: Depictd the order in which the elements should be processed in the array.
-        mode:
-          type: string
-          enum:
-            - allOf
-            - oneOf
-          description: execution mode
-          example: allOf
-        elements:
+        prompts:
           type: array
+          description: List of prompts in the section
           items:
-            $ref: '#/components/schemas/Element'
+            $ref: '#/components/schemas/Prompt'
 
-    Element:
+    Prompt:
       type: object
-      description: The user attribute information required by the registration executor to perform the registration.
-      required:
-        - name
-        - inputType
-        - dataType
-        - order
       properties:
         name:
           type: string
-          description: The display name of the attribute.
-          example: username
+          description: The name or identifier of the prompt
+          example: firstName
         value:
           type: string
-          description: The value of the attribute if already available.
-          example: johndoe
+          description: The current value of the prompt (can be pre-filled)
+          example: ""
         dataType:
           type: string
-          enum:
-            - STRING
-            - NUMBER
-            - BOOLEAN
-            - DATE
-          description: Indicates the data type of the parameter.
-          example: STRING
+          description: Data type of the prompt (e.g., string, number, selection)
+          example: string
         isMandatory:
           type: boolean
-          description: Indicates whether the attribute is mandatory to be filled.
+          description: Indicates if the prompt is required
           example: true
         isReadOnly:
           type: boolean
-          description: Indicates whether the attribute is read only if a value is already available.
-          example: true
+          description: Indicates if the prompt is read-only
+          example: false
         order:
           type: integer
-          description: Indicates the display order of the attribute.
+          description: The order in which the prompt appears
           example: 1
         validationRegex:
           type: string
-          description: Contains the regex pattern to validate the value of the attribute.
-          example: ^[\S]{3,50}$
+          description: Validation regex for the prompt (if applicable)
+          example: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
         i18nKey:
           type: string
-          description: The i18n key for the attribute. This can be used to get the localized text for the attribute.
-          example: attribute.username
+          description: Internationalization key for the prompt label
+          example: userInfo.firstName
+        options:
+          type: array
+          description: Available options for selection prompts (if applicable)
+          items:
+            $ref: '#/components/schemas/Option'
+
+    Option:
+      type: object
+      properties:
+        value:
+          type: string
+          description: The value for the option
+          example: password
+        i18nKey:
+          type: string
+          description: Internationalization key for the option label
+          example: authMethod.password
 
     Error:
       type: object
