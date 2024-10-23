@@ -19,10 +19,13 @@
 package org.wso2.carbon.identity.rest.api.user.registration.v2.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.wso2.carbon.identity.api.user.common.ContextLoader;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.RegistrationApiService;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.model.InitRegRequest;
+import org.wso2.carbon.identity.rest.api.user.registration.v2.model.RegCompleteResponse;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SubmitRegRequest;
 
+import java.net.URI;
 import javax.ws.rs.core.Response;
 
 /**
@@ -38,12 +41,22 @@ public class RegistrationApiServiceImpl implements RegistrationApiService {
 
         // do some magic!
         Object response = userRegistrationService.triggerRegistration(initRegRequest);
+        if (response instanceof RegCompleteResponse) {
+            String resourceId = "user-uuid";
+            URI location = ContextLoader.buildURIForHeader("/v1/registration/" + resourceId);
+            return Response.created(location).entity(response).build();
+        }
         return Response.ok().entity(response).build();    }
 
     @Override
     public Response submitRegistrationData(SubmitRegRequest submitRegRequest) {
 
         Object response = userRegistrationService.continueRegistration(submitRegRequest);
+        if (response instanceof RegCompleteResponse) {
+            String resourceId = "user-uuid";
+            URI location = ContextLoader.buildURIForHeader("/v1/registration/" + resourceId);
+            return Response.created(location).entity(response).build();
+        }
         return Response.ok().entity(response).build();
     }
 }

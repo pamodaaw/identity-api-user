@@ -23,18 +23,18 @@ import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.ParamInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegExecutorMetadata;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
-import org.wso2.carbon.identity.user.self.registration.model.response.ExecutorMetadata;
-import org.wso2.carbon.identity.user.self.registration.model.response.ExecutorResponse;
-import org.wso2.carbon.identity.user.self.registration.model.response.Message;
-import org.wso2.carbon.identity.user.self.registration.model.response.RequiredParam;
-import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.ExecutorMetadata;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.ExecutorResponse;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.Message;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.RequiredParam;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.util.RegistrationConstants;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants.PromptType.USER_PROMPT;
+import static org.wso2.carbon.identity.user.self.registration.stepBasedExecution.util.RegistrationConstants.PromptType.USER_PROMPT;
 
 /**
  * Converts ExecutorResponse to RegistrationComponent.

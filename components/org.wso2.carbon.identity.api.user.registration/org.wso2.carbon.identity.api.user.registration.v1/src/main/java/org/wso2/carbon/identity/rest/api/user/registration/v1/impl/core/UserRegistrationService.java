@@ -31,14 +31,14 @@ import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegCompleteR
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
 import org.wso2.carbon.identity.user.self.registration.UserRegistrationFlowService;
 import org.wso2.carbon.identity.user.self.registration.exception.RegistrationFrameworkException;
-import org.wso2.carbon.identity.user.self.registration.model.RegistrationRequest;
-import org.wso2.carbon.identity.user.self.registration.model.response.RegistrationResponse;
-import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.model.RegistrationRequest;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.RegistrationResponse;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.util.RegistrationConstants;
 
 import javax.ws.rs.core.Response;
 
-import static org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants.StepStatus.COMPLETE;
-import static org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants.SupportedProtocol.API_BASED;
+import static org.wso2.carbon.identity.user.self.registration.stepBasedExecution.util.RegistrationConstants.StepStatus.COMPLETE;
+import static org.wso2.carbon.identity.user.self.registration.stepBasedExecution.util.RegistrationConstants.SupportedProtocol.API_BASED;
 
 /**
  * Implementation of the Rest APIs for user self registration.
