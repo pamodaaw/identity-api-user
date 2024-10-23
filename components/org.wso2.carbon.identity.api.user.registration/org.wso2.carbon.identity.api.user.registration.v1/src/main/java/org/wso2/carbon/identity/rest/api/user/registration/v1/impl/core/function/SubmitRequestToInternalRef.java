@@ -20,8 +20,8 @@ package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.functio
 
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SelectedRegExecutor;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.SubmitRegRequest;
-import org.wso2.carbon.identity.user.self.registration.model.EngagedExecutor;
-import org.wso2.carbon.identity.user.self.registration.model.RegistrationRequest;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.model.EngagedExecutor;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.model.RegistrationRequest;
 
 import java.util.function.Function;
 

@@ -19,8 +19,8 @@
 package org.wso2.carbon.identity.rest.api.user.registration.v1.impl.core.function;
 
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegPromptResponse;
-import org.wso2.carbon.identity.user.self.registration.model.response.RegistrationResponse;
-import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.RegistrationResponse;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.util.RegistrationConstants;
 
 import java.util.function.Function;
 

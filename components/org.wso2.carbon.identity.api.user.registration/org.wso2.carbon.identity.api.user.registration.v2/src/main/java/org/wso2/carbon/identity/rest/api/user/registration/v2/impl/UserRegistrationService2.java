@@ -33,21 +33,20 @@ import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SectionData;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SubmitRegRequest;
 import org.wso2.carbon.identity.user.self.registration.UserRegistrationFlowService;
 import org.wso2.carbon.identity.user.self.registration.exception.RegistrationFrameworkException;
-import org.wso2.carbon.identity.user.self.registration.graphexecutor.model.ExecutionState;
-import org.wso2.carbon.identity.user.self.registration.graphexecutor.model.InputData;
-import org.wso2.carbon.identity.user.self.registration.graphexecutor.model.InputMetaData;
-import org.wso2.carbon.identity.user.self.registration.graphexecutor.model.NodeResponse;
-import org.wso2.carbon.identity.user.self.registration.graphexecutor.model.RegOption;
+import org.wso2.carbon.identity.user.self.registration.model.ExecutionState;
+import org.wso2.carbon.identity.user.self.registration.model.InputData;
+import org.wso2.carbon.identity.user.self.registration.model.InputMetaData;
+import org.wso2.carbon.identity.user.self.registration.model.NodeResponse;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import static org.wso2.carbon.identity.user.self.registration.graphexecutor.Constants.STATUS_COMPLETE;
-import static org.wso2.carbon.identity.user.self.registration.graphexecutor.Constants.STATUS_USER_CHOICE_REQUIRED;
-import static org.wso2.carbon.identity.user.self.registration.graphexecutor.Constants.STATUS_USER_INPUT_REQUIRED;
+import static org.wso2.carbon.identity.user.self.registration.util.Constants.STATUS_COMPLETE;
+import static org.wso2.carbon.identity.user.self.registration.util.Constants.STATUS_USER_INPUT_REQUIRED;
 
 /**
  * Implementation of the Rest APIs for user self registration.
@@ -60,7 +59,7 @@ public class UserRegistrationService2 {
 
         UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
         try {
-            ExecutionState status = service.triggerRegFlow(null, null);
+            ExecutionState status = service.initiateFlow(initRegRequest.getApplicationId());
             return handleResponse(status);
         } catch (RegistrationFrameworkException e) {
             return  buildServerError(e);
@@ -72,16 +71,15 @@ public class UserRegistrationService2 {
         UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
         List<SectionData> inputData = request.getUserData();
 
-        List<InputData> inputList = new ArrayList<>();
+        LinkedHashMap<String, InputData> inputList = new LinkedHashMap<>();
         for (SectionData sectionData : inputData) {
             InputData input = new InputData();
-            input.setNodeName(sectionData.getId());
             input.setUserInput(sectionData.getInputs());
-            inputList.add(input);
+            inputList.put(sectionData.getId(), input);
         }
 
         try {
-            ExecutionState status = service.triggerRegFlow(request.getFlowId(), inputList);
+            ExecutionState status = service.continueFlow(request.getFlowId(), inputList);
             return handleResponse(status);
         } catch (RegistrationFrameworkException e) {
             return  buildServerError(e);
@@ -92,16 +90,19 @@ public class UserRegistrationService2 {
     private Object handleResponse(ExecutionState status) {
 
         NodeResponse response = status.getResponse();
+
         if (STATUS_COMPLETE.equals(response.getStatus())) {
-            return new RegCompleteResponse();
+            RegCompleteResponse regCompleteResponse = new RegCompleteResponse();
+            regCompleteResponse.setFlowId(status.getFlowId());
+            regCompleteResponse.setUserAssertion(response.getUserAssertion());
+            return regCompleteResponse;
         }
-        if (STATUS_USER_CHOICE_REQUIRED.equals(response.getStatus()) ||
-                STATUS_USER_INPUT_REQUIRED.equals(response.getStatus())) {
+        if (STATUS_USER_INPUT_REQUIRED.equals(response.getStatus())) {
             RegPromptResponse regPromptResponse = new RegPromptResponse();
             regPromptResponse.setFlowId(status.getFlowId());
             regPromptResponse.setFlowStatus(RegPromptResponse.FlowStatusEnum.INCOMPLETE);
 
-            Map<String, List<InputMetaData>> inputDataMap = response.getInputDataList();
+            Map<String, List<InputMetaData>> inputDataMap = response.getInputMetaDataList();
             List<Section> sections = new ArrayList<>();
 
             if (inputDataMap != null) {
@@ -112,15 +113,7 @@ public class UserRegistrationService2 {
 
                     List<Prompt> prompts = new ArrayList<>();
                     for (InputMetaData meta : entry.getValue()) {
-                        Prompt prompt = new Prompt();
-                        prompt.setName(meta.getName());
-                        prompt.setDataType(meta.getDataType());
-                        prompt.setOrder(prompts.size() + 1);
-
-                        for (RegOption option : meta.getRegOptions()) {
-                            prompt.addOptionsItem(new Option().value(option.getValue()));
-                        }
-                        prompts.add(prompt);
+                        prompts.add(convertIntoPrompt(meta, prompts));
                     }
                     section.setPrompts(prompts);
                     sections.add(section);
@@ -132,6 +125,23 @@ public class UserRegistrationService2 {
         throw buildServerError(new Exception("Unexpected error occurred."));
     }
 
+    private static Prompt convertIntoPrompt(InputMetaData meta, List<Prompt> prompts) {
+
+        Prompt prompt = new Prompt();
+        prompt.setName(meta.getName());
+        prompt.setValue(meta.getAvailableValue());
+        prompt.setDataType(meta.getDataType());
+        prompt.setOrder(prompts.size() + 1);
+        prompt.setIsMandatory(meta.isMandatory());
+        prompt.setIsReadOnly(meta.isReadOnly());
+        prompt.setValidationRegex(meta.getValidationRegex());
+        prompt.setI18nKey(meta.getI18nKey());
+        for (Object option : meta.getOptions()) {
+            prompt.addOptionsItem(new Option().value((String) option));
+        }
+        return prompt;
+    }
+
 
     private APIError buildServerError(Exception e) {
 
@@ -140,6 +150,6 @@ public class UserRegistrationService2 {
         errorDTO.setCode("USR-00001");
 
         LOG.error("Server Error", e);
-        return new APIError(Response.Status.INTERNAL_SERVER_ERROR, errorDTO);
+        throw new APIError(Response.Status.INTERNAL_SERVER_ERROR, errorDTO);
     }
 }

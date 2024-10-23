@@ -212,7 +212,7 @@ components:
           description: A unique id for the element in the next step array.
         order:
           type: integer
-          description: Depictd the order in which the elements should be processed in the array.
+          description: Depicts the order in which the elements should be processed in the array.
         prompts:
           type: array
           description: List of prompts in the section

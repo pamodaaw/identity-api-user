@@ -22,9 +22,9 @@ import org.wso2.carbon.identity.rest.api.user.registration.v1.model.Context;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.MessageInfo;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.NextStep;
 import org.wso2.carbon.identity.rest.api.user.registration.v1.model.RegStepExecutor;
-import org.wso2.carbon.identity.user.self.registration.model.response.Message;
-import org.wso2.carbon.identity.user.self.registration.model.response.NextStepResponse;
-import org.wso2.carbon.identity.user.self.registration.util.RegistrationConstants;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.Message;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.response.NextStepResponse;
+import org.wso2.carbon.identity.user.self.registration.stepBasedExecution.util.RegistrationConstants;
 
 import java.util.List;
 import java.util.Map;
