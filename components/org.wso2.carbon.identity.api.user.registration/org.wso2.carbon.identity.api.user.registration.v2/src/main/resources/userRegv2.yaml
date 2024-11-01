@@ -116,23 +116,6 @@ components:
           description: |
             A unique identifier for the registration flow returned from the server. This identifier will be used to track the continuation of the flow.
           example: d13ec8d2-2d1e-11ee-be56-0242ac120002
-        userData:
-          type: array
-          items:
-            $ref: '#/components/schemas/SectionData'
-          description: Contains the list of input data.
-
-    SectionData:
-      type: object
-      description: Contains the data related to a section.
-      required:
-        - id
-        - inputs
-      properties:
-        id:
-          type: string
-          description: The unique identifier of the selected registration executor.
-          example: db1220160cb14f0a8d74b831e0939b62
         inputs:
           type: object
           description: The parameters required by the registration executor to perform user onboarding.
@@ -142,6 +125,37 @@ components:
             username: johnd
             firstname: John
             lastname: Doe
+
+    InputData:
+        type: object
+        description: The parameters required by the registration executor to perform user onboarding.
+        additionalProperties:
+          type: string
+        example:
+          username: johnd
+          firstname: John
+          lastname: Doe
+
+#    SectionData:
+#      type: object
+#      description: Contains the data related to a section.
+#      required:
+#        - id
+#        - inputs
+#      properties:
+#        id:
+#          type: string
+#          description: The unique identifier of the selected registration executor.
+#          example: db1220160cb14f0a8d74b831e0939b62
+#        inputs:
+#          type: object
+#          description: The parameters required by the registration executor to perform user onboarding.
+#          additionalProperties:
+#            type: string
+#          example:
+#            username: johnd
+#            firstname: John
+#            lastname: Doe
 
     RegPromptResponse:
       type: object
@@ -172,11 +186,11 @@ components:
             - REGISTRATION
           description: The type of the flow. This version only contains flowType REGISTRATION.
           example: REGISTRATION
-        sections:
+        prompts:
           description: Array of required elements
           type: array
           items:
-            $ref: '#/components/schemas/Section'
+            $ref: '#/components/schemas/Prompt'
 
     RegCompleteResponse:
       type: object
@@ -204,20 +218,20 @@ components:
           description: |
             An assertion for the newly created user based on the authentication protocol to be used for proceeding with the authentication. If the registration is not bound to any protocol, this will be null.
 
-    Section:
-      type: object
-      properties:
-        id:
-          type: string
-          description: A unique id for the element in the next step array.
-        order:
-          type: integer
-          description: Depicts the order in which the elements should be processed in the array.
-        prompts:
-          type: array
-          description: List of prompts in the section
-          items:
-            $ref: '#/components/schemas/Prompt'
+#    Section:
+#      type: object
+#      properties:
+#        id:
+#          type: string
+#          description: A unique id for the element in the next step array.
+#        order:
+#          type: integer
+#          description: Depicts the order in which the elements should be processed in the array.
+#        prompts:
+#          type: array
+#          description: List of prompts in the section
+#          items:
+#            $ref: '#/components/schemas/Prompt'
 
     Prompt:
       type: object

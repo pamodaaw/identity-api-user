@@ -60,7 +60,7 @@ public class Section  {
     }
 
     /**
-    * Depictd the order in which the elements should be processed in the array.
+    * Depicts the order in which the elements should be processed in the array.
     **/
     public Section order(Integer order) {
 
@@ -68,7 +68,7 @@ public class Section  {
         return this;
     }
     
-    @ApiModelProperty(value = "Depictd the order in which the elements should be processed in the array.")
+    @ApiModelProperty(value = "Depicts the order in which the elements should be processed in the array.")
     @JsonProperty("order")
     @Valid
     public Integer getOrder() {

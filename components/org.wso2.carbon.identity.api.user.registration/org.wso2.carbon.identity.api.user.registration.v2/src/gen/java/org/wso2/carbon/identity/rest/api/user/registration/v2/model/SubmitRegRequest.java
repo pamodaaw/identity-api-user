@@ -22,9 +22,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SectionData;
+import java.util.Map;
 import javax.validation.constraints.*;
 
 /**
@@ -39,7 +39,7 @@ import javax.xml.bind.annotation.*;
 public class SubmitRegRequest  {
   
     private String flowId;
-    private List<SectionData> userData = new ArrayList<>();
+    private Map<String, String> inputs = null;
 
 
     /**
@@ -64,28 +64,30 @@ public class SubmitRegRequest  {
     }
 
     /**
-    * Contains the list of input data.
+    * The parameters required by the registration executor to perform user onboarding.
     **/
-    public SubmitRegRequest userData(List<SectionData> userData) {
+    public SubmitRegRequest inputs(Map<String, String> inputs) {
 
-        this.userData = userData;
+        this.inputs = inputs;
         return this;
     }
     
-    @ApiModelProperty(required = true, value = "Contains the list of input data.")
-    @JsonProperty("userData")
+    @ApiModelProperty(example = "{\"username\":\"johnd\",\"firstname\":\"John\",\"lastname\":\"Doe\"}", value = "The parameters required by the registration executor to perform user onboarding.")
+    @JsonProperty("inputs")
     @Valid
-    @NotNull(message = "Property userData cannot be null.")
-
-    public List<SectionData> getUserData() {
-        return userData;
+    public Map<String, String> getInputs() {
+        return inputs;
     }
-    public void setUserData(List<SectionData> userData) {
-        this.userData = userData;
+    public void setInputs(Map<String, String> inputs) {
+        this.inputs = inputs;
     }
 
-    public SubmitRegRequest addUserDataItem(SectionData userDataItem) {
-        this.userData.add(userDataItem);
+
+    public SubmitRegRequest putInputsItem(String key, String inputsItem) {
+        if (this.inputs == null) {
+            this.inputs = new HashMap<>();
+        }
+        this.inputs.put(key, inputsItem);
         return this;
     }
 
@@ -102,12 +104,12 @@ public class SubmitRegRequest  {
         }
         SubmitRegRequest submitRegRequest = (SubmitRegRequest) o;
         return Objects.equals(this.flowId, submitRegRequest.flowId) &&
-            Objects.equals(this.userData, submitRegRequest.userData);
+            Objects.equals(this.inputs, submitRegRequest.inputs);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, userData);
+        return Objects.hash(flowId, inputs);
     }
 
     @Override
@@ -117,7 +119,7 @@ public class SubmitRegRequest  {
         sb.append("class SubmitRegRequest {\n");
         
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
-        sb.append("    userData: ").append(toIndentedString(userData)).append("\n");
+        sb.append("    inputs: ").append(toIndentedString(inputs)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -24,7 +24,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
-import org.wso2.carbon.identity.rest.api.user.registration.v2.model.Section;
+import org.wso2.carbon.identity.rest.api.user.registration.v2.model.Prompt;
 import javax.validation.constraints.*;
 
 /**
@@ -107,7 +107,7 @@ public enum FlowTypeEnum {
 }
 
     private FlowTypeEnum flowType;
-    private List<Section> sections = new ArrayList<>();
+    private List<Prompt> prompts = null;
 
 
     /**
@@ -174,26 +174,27 @@ public enum FlowTypeEnum {
     /**
     * Array of required elements
     **/
-    public RegPromptResponse sections(List<Section> sections) {
+    public RegPromptResponse prompts(List<Prompt> prompts) {
 
-        this.sections = sections;
+        this.prompts = prompts;
         return this;
     }
     
-    @ApiModelProperty(required = true, value = "Array of required elements")
-    @JsonProperty("sections")
+    @ApiModelProperty(value = "Array of required elements")
+    @JsonProperty("prompts")
     @Valid
-    @NotNull(message = "Property sections cannot be null.")
-
-    public List<Section> getSections() {
-        return sections;
+    public List<Prompt> getPrompts() {
+        return prompts;
     }
-    public void setSections(List<Section> sections) {
-        this.sections = sections;
+    public void setPrompts(List<Prompt> prompts) {
+        this.prompts = prompts;
     }
 
-    public RegPromptResponse addSectionsItem(Section sectionsItem) {
-        this.sections.add(sectionsItem);
+    public RegPromptResponse addPromptsItem(Prompt promptsItem) {
+        if (this.prompts == null) {
+            this.prompts = new ArrayList<>();
+        }
+        this.prompts.add(promptsItem);
         return this;
     }
 
@@ -212,12 +213,12 @@ public enum FlowTypeEnum {
         return Objects.equals(this.flowId, regPromptResponse.flowId) &&
             Objects.equals(this.flowStatus, regPromptResponse.flowStatus) &&
             Objects.equals(this.flowType, regPromptResponse.flowType) &&
-            Objects.equals(this.sections, regPromptResponse.sections);
+            Objects.equals(this.prompts, regPromptResponse.prompts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, flowStatus, flowType, sections);
+        return Objects.hash(flowId, flowStatus, flowType, prompts);
     }
 
     @Override
@@ -229,7 +230,7 @@ public enum FlowTypeEnum {
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
         sb.append("    flowStatus: ").append(toIndentedString(flowStatus)).append("\n");
         sb.append("    flowType: ").append(toIndentedString(flowType)).append("\n");
-        sb.append("    sections: ").append(toIndentedString(sections)).append("\n");
+        sb.append("    prompts: ").append(toIndentedString(prompts)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -28,8 +28,6 @@ import org.wso2.carbon.identity.rest.api.user.registration.v2.model.Option;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.model.Prompt;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.model.RegCompleteResponse;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.model.RegPromptResponse;
-import org.wso2.carbon.identity.rest.api.user.registration.v2.model.Section;
-import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SectionData;
 import org.wso2.carbon.identity.rest.api.user.registration.v2.model.SubmitRegRequest;
 import org.wso2.carbon.identity.user.self.registration.UserRegistrationFlowService;
 import org.wso2.carbon.identity.user.self.registration.exception.RegistrationFrameworkException;
@@ -39,7 +37,6 @@ import org.wso2.carbon.identity.user.self.registration.model.InputMetaData;
 import org.wso2.carbon.identity.user.self.registration.model.NodeResponse;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,22 +66,16 @@ public class UserRegistrationService2 {
     public Object continueRegistration(SubmitRegRequest request) {
 
         UserRegistrationFlowService service = UserRegistrationServiceHolder.getUserRegistrationFlowService();
-        List<SectionData> inputData = request.getUserData();
+        Map<String, String> userInputs = request.getInputs();
 
-        LinkedHashMap<String, InputData> inputList = new LinkedHashMap<>();
-        for (SectionData sectionData : inputData) {
-            InputData input = new InputData();
-            input.setUserInput(sectionData.getInputs());
-            inputList.put(sectionData.getId(), input);
-        }
-
+        InputData inputs = new InputData();
+        inputs.setUserInput(userInputs);
         try {
-            ExecutionState status = service.continueFlow(request.getFlowId(), inputList);
+            ExecutionState status = service.continueFlow(request.getFlowId(), inputs);
             return handleResponse(status);
         } catch (RegistrationFrameworkException e) {
-            return  buildServerError(e);
+            return buildServerError(e);
         }
-
     }
 
     private Object handleResponse(ExecutionState status) {
@@ -102,24 +93,15 @@ public class UserRegistrationService2 {
             regPromptResponse.setFlowId(status.getFlowId());
             regPromptResponse.setFlowStatus(RegPromptResponse.FlowStatusEnum.INCOMPLETE);
 
-            Map<String, List<InputMetaData>> inputDataMap = response.getInputMetaDataList();
-            List<Section> sections = new ArrayList<>();
+            List<InputMetaData> inputDataMap = response.getInputMetaDataList();
 
             if (inputDataMap != null) {
-                for (Map.Entry<String, List<InputMetaData>> entry : inputDataMap.entrySet()) {
-                    Section section = new Section();
-                    section.setId(entry.getKey());
-                    section.setOrder(sections.size() + 1);
-
-                    List<Prompt> prompts = new ArrayList<>();
-                    for (InputMetaData meta : entry.getValue()) {
-                        prompts.add(convertIntoPrompt(meta, prompts));
-                    }
-                    section.setPrompts(prompts);
-                    sections.add(section);
+                List<Prompt> prompts = new ArrayList<>();
+                for (InputMetaData metaData : inputDataMap) {
+                    prompts.add(convertIntoPrompt(metaData, prompts));
                 }
+                regPromptResponse.setPrompts(prompts);
             }
-            regPromptResponse.setSections(sections);
             return regPromptResponse;
         }
         throw buildServerError(new Exception("Unexpected error occurred."));
