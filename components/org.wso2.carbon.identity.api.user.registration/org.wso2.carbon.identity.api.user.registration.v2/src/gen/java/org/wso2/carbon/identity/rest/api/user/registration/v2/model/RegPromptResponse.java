@@ -107,6 +107,7 @@ public enum FlowTypeEnum {
 }
 
     private FlowTypeEnum flowType;
+    private String pageId;
     private List<Prompt> prompts = null;
 
 
@@ -172,6 +173,25 @@ public enum FlowTypeEnum {
     }
 
     /**
+    * The unique identifier of the current page.
+    **/
+    public RegPromptResponse pageId(String pageId) {
+
+        this.pageId = pageId;
+        return this;
+    }
+    
+    @ApiModelProperty(example = "1", value = "The unique identifier of the current page.")
+    @JsonProperty("pageId")
+    @Valid
+    public String getPageId() {
+        return pageId;
+    }
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
+    }
+
+    /**
     * Array of required elements
     **/
     public RegPromptResponse prompts(List<Prompt> prompts) {
@@ -213,12 +233,13 @@ public enum FlowTypeEnum {
         return Objects.equals(this.flowId, regPromptResponse.flowId) &&
             Objects.equals(this.flowStatus, regPromptResponse.flowStatus) &&
             Objects.equals(this.flowType, regPromptResponse.flowType) &&
+            Objects.equals(this.pageId, regPromptResponse.pageId) &&
             Objects.equals(this.prompts, regPromptResponse.prompts);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(flowId, flowStatus, flowType, prompts);
+        return Objects.hash(flowId, flowStatus, flowType, pageId, prompts);
     }
 
     @Override
@@ -230,6 +251,7 @@ public enum FlowTypeEnum {
         sb.append("    flowId: ").append(toIndentedString(flowId)).append("\n");
         sb.append("    flowStatus: ").append(toIndentedString(flowStatus)).append("\n");
         sb.append("    flowType: ").append(toIndentedString(flowType)).append("\n");
+        sb.append("    pageId: ").append(toIndentedString(pageId)).append("\n");
         sb.append("    prompts: ").append(toIndentedString(prompts)).append("\n");
         sb.append("}");
         return sb.toString();
