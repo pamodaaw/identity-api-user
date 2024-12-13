@@ -107,7 +107,7 @@ public enum FlowTypeEnum {
 }
 
     private FlowTypeEnum flowType;
-    private String pageId;
+    private Object pageId;
     private List<Prompt> prompts = null;
 
 
@@ -173,21 +173,20 @@ public enum FlowTypeEnum {
     }
 
     /**
-    * The unique identifier of the current page.
     **/
-    public RegPromptResponse pageId(String pageId) {
+    public RegPromptResponse pageId(Object pageId) {
 
         this.pageId = pageId;
         return this;
     }
     
-    @ApiModelProperty(example = "1", value = "The unique identifier of the current page.")
+    @ApiModelProperty(value = "")
     @JsonProperty("pageId")
     @Valid
-    public String getPageId() {
+    public Object getPageId() {
         return pageId;
     }
-    public void setPageId(String pageId) {
+    public void setPageId(Object pageId) {
         this.pageId = pageId;
     }
 

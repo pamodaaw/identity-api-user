@@ -187,9 +187,7 @@ components:
           description: The type of the flow. This version only contains flowType REGISTRATION.
           example: REGISTRATION
         pageId:
-          type: string
-          description: The unique identifier of the current page.
-          example: 1
+          type: object
         prompts:
           description: Array of required elements
           type: array

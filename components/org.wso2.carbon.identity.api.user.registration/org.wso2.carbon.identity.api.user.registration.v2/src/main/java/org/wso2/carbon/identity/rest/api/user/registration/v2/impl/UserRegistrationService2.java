@@ -92,7 +92,7 @@ public class UserRegistrationService2 {
             RegPromptResponse regPromptResponse = new RegPromptResponse();
             regPromptResponse.setFlowId(status.getFlowId());
             regPromptResponse.setFlowStatus(RegPromptResponse.FlowStatusEnum.INCOMPLETE);
-            regPromptResponse.setPageId(response.getPageId());
+            regPromptResponse.setPageId(response.getPage());
 
             List<InputMetaData> inputDataMap = response.getInputMetaDataList();
 
