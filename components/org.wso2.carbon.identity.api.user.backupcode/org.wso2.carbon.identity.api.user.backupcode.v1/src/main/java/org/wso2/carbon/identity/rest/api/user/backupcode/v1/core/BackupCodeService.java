@@ -22,6 +22,7 @@ import org.wso2.carbon.identity.api.user.backupcode.common.BackupCodeConstants;
 import org.wso2.carbon.identity.api.user.common.ContextLoader;
 import org.wso2.carbon.identity.api.user.common.error.APIError;
 import org.wso2.carbon.identity.api.user.common.error.ErrorResponse;
+import org.wso2.carbon.identity.api.user.common.function.UniqueIdToUser;
 import org.wso2.carbon.identity.application.authentication.framework.exception.AuthenticationFailedException;
 import org.wso2.carbon.identity.application.authenticator.backupcode.BackupCodeAPIHandler;
 import org.wso2.carbon.identity.application.authenticator.backupcode.exception.BackupCodeException;
@@ -29,6 +30,7 @@ import org.wso2.carbon.identity.application.common.model.User;
 import org.wso2.carbon.identity.core.util.IdentityUtil;
 import org.wso2.carbon.identity.rest.api.user.backupcode.v1.dto.BackupCodeResponseDTO;
 import org.wso2.carbon.identity.rest.api.user.backupcode.v1.dto.RemainingBackupCodeResponseDTO;
+import org.wso2.carbon.identity.rest.api.user.backupcode.v1.util.BackupCodeServiceHolder;
 import org.wso2.carbon.user.api.UserStoreException;
 
 import java.util.List;
@@ -49,29 +51,31 @@ public class BackupCodeService {
     private static final Log log = LogFactory.getLog(BackupCodeService.class);
 
     /**
-     * Retrieve backup codes of a given user.
+     * Retrieve remaining backup codes count of the authenticated user.
      *
-     * @return Backup Codes.
+     * @return Remaining backup codes count.
      */
     public RemainingBackupCodeResponseDTO getBackupCodes() {
 
         if (!isValidAuthenticationType()) {
             throw handleError(Response.Status.FORBIDDEN, USER_ERROR_ACCESS_DENIED_FOR_BASIC_AUTH);
         }
-        RemainingBackupCodeResponseDTO remainingBackupCodeResponseDTO = new RemainingBackupCodeResponseDTO();
-        try {
-            User user = getUser();
-            int remainingBackupCodesCount =
-                    BackupCodeAPIHandler.getRemainingBackupCodesCount(user.toFullQualifiedUsername());
-            remainingBackupCodeResponseDTO.setRemainingBackupCodesCount(remainingBackupCodesCount);
-        } catch (BackupCodeException e) {
-            throw handleException(e, SERVER_ERROR_RETRIEVE_BACKUP_CODES);
-        }
-        return remainingBackupCodeResponseDTO;
+        return getBackupCodesForUser(getUser());
     }
 
     /**
-     * Initialized backup codes.
+     * Retrieve remaining backup codes count for a given user (admin operation).
+     *
+     * @param userId User ID (UUID) of the target user.
+     * @return Remaining backup codes count.
+     */
+    public RemainingBackupCodeResponseDTO getBackupCodes(String userId) {
+
+        return getBackupCodesForUser(resolveUser(userId));
+    }
+
+    /**
+     * Generate backup codes for the authenticated user.
      *
      * @return Newly generated backup codes.
      */
@@ -80,16 +84,39 @@ public class BackupCodeService {
         if (!isValidAuthenticationType()) {
             throw handleError(Response.Status.FORBIDDEN, USER_ERROR_ACCESS_DENIED_FOR_BASIC_AUTH);
         }
-        try {
-            BackupCodeResponseDTO backupCodeResponseDTO = new BackupCodeResponseDTO();
-            User user = getUser();
-            List<String> backupCodes =
-                    BackupCodeAPIHandler.generateBackupCodes(user.toFullQualifiedUsername());
-            backupCodeResponseDTO.setBackupCodes(backupCodes);
-            return backupCodeResponseDTO;
-        } catch (BackupCodeException e) {
-            throw handleException(e, SERVER_ERROR_INIT_BACKUP_CODES);
+        return initBackupCodesForUser(getUser());
+    }
+
+    /**
+     * Generate backup codes for a given user (admin operation).
+     *
+     * @param userId User ID (UUID) of the target user.
+     * @return Newly generated backup codes.
+     */
+    public BackupCodeResponseDTO initBackupCodes(String userId) {
+
+        return initBackupCodesForUser(resolveUser(userId));
+    }
+
+    /**
+     * Delete backup codes of the authenticated user.
+     */
+    public void deleteBackupCodes() {
+
+        if (!isValidAuthenticationType()) {
+            throw handleError(Response.Status.FORBIDDEN, USER_ERROR_ACCESS_DENIED_FOR_BASIC_AUTH);
         }
+        deleteBackupCodesForUser(getUser());
+    }
+
+    /**
+     * Delete backup codes of a given user (admin operation).
+     *
+     * @param userId User ID (UUID) of the target user.
+     */
+    public void deleteBackupCodes(String userId) {
+
+        deleteBackupCodesForUser(resolveUser(userId));
     }
 
     /**
@@ -104,20 +131,49 @@ public class BackupCodeService {
         return handleError(Response.Status.HTTP_VERSION_NOT_SUPPORTED, errorEnum);
     }
 
-    /**
-     * Delete backup codes.
-     */
-    public void deleteBackupCodes() {
+    private RemainingBackupCodeResponseDTO getBackupCodesForUser(User user) {
 
-        if (!isValidAuthenticationType()) {
-            throw handleError(Response.Status.FORBIDDEN, USER_ERROR_ACCESS_DENIED_FOR_BASIC_AUTH);
-        }
         try {
-            User user = getUser();
-            BackupCodeAPIHandler.deleteBackupCodes(user.toFullQualifiedUsername());
-        } catch (BackupCodeException ex) {
-            throw handleException(ex, SERVER_ERROR_DELETING_BACKUP_CODES);
+            RemainingBackupCodeResponseDTO dto = new RemainingBackupCodeResponseDTO();
+            dto.setRemainingBackupCodesCount(
+                    BackupCodeAPIHandler.getRemainingBackupCodesCount(user.toFullQualifiedUsername()));
+            return dto;
+        } catch (BackupCodeException e) {
+            throw handleException(e, SERVER_ERROR_RETRIEVE_BACKUP_CODES);
         }
+    }
+
+    private BackupCodeResponseDTO initBackupCodesForUser(User user) {
+
+        try {
+            BackupCodeResponseDTO dto = new BackupCodeResponseDTO();
+            dto.setBackupCodes(BackupCodeAPIHandler.generateBackupCodes(user.toFullQualifiedUsername()));
+            return dto;
+        } catch (BackupCodeException e) {
+            throw handleException(e, SERVER_ERROR_INIT_BACKUP_CODES);
+        }
+    }
+
+    private void deleteBackupCodesForUser(User user) {
+
+        try {
+            BackupCodeAPIHandler.deleteBackupCodes(user.toFullQualifiedUsername());
+        } catch (BackupCodeException e) {
+            throw handleException(e, SERVER_ERROR_DELETING_BACKUP_CODES);
+        }
+    }
+
+    /**
+     * Resolve a user from a UUID user ID using the current tenant context.
+     *
+     * @param userId User ID (UUID).
+     * @return Resolved User object.
+     */
+    private User resolveUser(String userId) {
+
+        String tenantDomain = ContextLoader.getTenantDomainFromContext();
+        return new UniqueIdToUser().apply(
+                BackupCodeServiceHolder.getRealmService(), userId, tenantDomain);
     }
 
     /**
